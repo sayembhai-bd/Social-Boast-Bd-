@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SMM Master Pro</title>
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
+    <!-- CSS & Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style id="admin-theme">
+        :root {
+            --primary: #6c5ce7;
+            --success: #00b894;
+            --dark: #2d3436;
+        }
+    </style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f7f6; margin: 0; padding-bottom: 80px; overflow-x: hidden; box-sizing: border-box; }
+
+        /* Header */
+        .header { background: linear-gradient(135deg, var(--primary), #8e44ad); color: white; padding: 50px 20px 80px; text-align: center; border-radius: 0 0 40px 40px; position: relative; }
+        .menu-icon { position: absolute; top: 25px; left: 20px; font-size: 24px; cursor: pointer; }
+
+        /* Sidebar Menu */
+        .sidebar { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: white; z-index: 7000; transition: 0.4s; box-shadow: 5px 0 25px rgba(0,0,0,0.2); overflow-y: auto; }
+        .sidebar.active { left: 0; }
+        .side-header { padding: 40px 20px; background: #f8f9fa; text-align: center; border-bottom: 1px solid #eee; display: flex; flex-direction: column; align-items: center; }
+        .sidebar-item { padding: 15px 25px; border-bottom: 1px solid #f8f9fa; display: flex; align-items: center; gap: 15px; font-weight: 500; cursor: pointer; color: #444; width: 100%; box-sizing: border-box; }
+        .sidebar-item i { width: 20px; text-align: center; color: var(--primary); }
+
+        /* Wallet Card */
+        .wallet-card { background: white; margin: -45px 20px 20px; padding: 22px; border-radius: 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; z-index: 10; }
+        .wallet-card h3 { margin: 0; color: var(--primary); font-size: 26px; font-weight: 700; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 20px; margin-bottom: 15px; }
+        .stat-box { background: white; padding: 12px 5px; border-radius: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
+        .stat-box small { font-size: 11px; color: #7f8c8d; display: block; margin-bottom: 2px; }
+        .stat-box b { font-size: 18px; color: var(--dark); display: block; }
+
+        /* Notice Bar */
+        .notice-container { margin: 15px 20px; background: #fff; padding: 12px; border-radius: 12px; border-left: 5px solid var(--primary); font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; }
+
+        /* Category Grid */
+        .grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 10px 20px; }
+        .cat-card { background: white; padding: 15px 5px; border-radius: 18px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 2.5px solid transparent; transition: 0.3s; }
+        .cat-card.active-cat { border-color: var(--primary); background: #f0edff; transform: scale(1.05); }
+        .cat-card .icon-box { height: 45px; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; }
+        .cat-card img { width: 38px; height: 38px; object-fit: contain; }
+        .cat-card span { font-size: 11px; font-weight: 600; }
+
+        /* Service Item */
+        .service-item { background: white; padding: 18px; border-radius: 20px; margin: 0 20px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 3px 10px rgba(0,0,0,0.03); border-left: 5px solid var(--primary); }
+        .service-info b { font-size: 15px; color: #2d3436; display: block; margin-bottom: 3px; }
+        .service-info span { color: #636e72; font-size: 12px; font-weight: 500; }
+        .order-btn { background: var(--success); color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer; }
+
+        /* Modals - Centered */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 8000; overflow-y: auto; align-items: center; justify-content: center; }
+        .modal-content { background: white; width: 90%; max-width: 380px; padding: 25px; border-radius: 25px; box-sizing: border-box; position: relative; animation: modalPop 0.3s ease; }
+        
+        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        input, select { width: 100%; padding: 13px; margin: 10px 0; border: 1px solid #ddd; border-radius: 12px; box-sizing: border-box; }
+        .confirm-btn { background: var(--primary); color: white; width: 100%; padding: 14px; border: none; border-radius: 15px; font-weight: 600; font-size: 15px; cursor: pointer; }
+
+        /* Centered Custom Alert */
+        .c-alert { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .c-alert-content { background: white; padding: 30px; border-radius: 25px; width: 100%; max-width: 300px; text-align: center; box-sizing: border-box; animation: modalPop 0.3s ease; }
+        
+        .whatsapp-float { position: fixed; bottom: 25px; right: 20px; background: #25d366; color: white; width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1000; text-decoration: none; }
+        .hidden { display: none !important; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 6000; }
+    </style>
+</head>
+<body>
+
+    <!-- Centered Alert -->
+    <div id="c-alert" class="c-alert">
+        <div class="c-alert-content">
+            <i class="fas fa-info-circle" id="alert-icon" style="font-size: 40px; color: var(--primary); margin-bottom: 15px;"></i>
+            <p id="c-alert-msg" style="font-weight: 600; color: #333; margin-bottom: 20px;"></p>
+            <button class="confirm-btn" onclick="closeAlert()">ঠিক আছে</button>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="side-header">
+            <div style="width:70px; height:70px; background:var(--primary); border-radius:50%; margin: 0 auto 10px; display:flex; align-items:center; justify-content:center; color:white; font-size:28px;"><i class="fas fa-user"></i></div>
+            <b id="side-name">স্বাগতম!</b><br><small id="side-phone">লগইন করুন</small>
+        </div>
+        <div id="side-logged-in" class="hidden">
+            <div class="sidebar-item" onclick="showHistory()"><i class="fas fa-shopping-cart"></i> আমার অর্ডারসমূহ</div>
+            <div class="sidebar-item" onclick="openModal('deposit-modal')"><i class="fas fa-wallet"></i> Add Money</div>
+            <div class="sidebar-item" onclick="openModal('about-modal')"><i class="fas fa-info-circle"></i> আমাদের সম্পর্কে</div>
+            <div class="sidebar-item" id="side-support-btn"><i class="fab fa-whatsapp"></i> কাস্টমার সাপোর্ট</div>
+            <div class="sidebar-item" id="side-how-to-btn"><i class="fas fa-book"></i> ব্যবহার বিধি (Video)</div>
+            <div class="sidebar-item" id="side-yt-btn"><i class="fab fa-youtube"></i> ভিডিও টিউটোরিয়াল</div>
+            <div class="sidebar-item" id="side-tg-btn"><i class="fab fa-telegram"></i> টেলিগ্রাম চ্যানেল</div>
+            <div class="sidebar-item" onclick="shareApp()"><i class="fas fa-share-alt"></i> অ্যাপ শেয়ার করুন</div>
+            <div class="sidebar-item" onclick="logout()" style="color:red; border-top:1px solid #eee; margin-top:15px;"><i class="fas fa-power-off"></i> লগআউট</div>
+        </div>
+        <div id="side-logged-out"><div class="sidebar-item" onclick="openModal('auth-modal')"><i class="fas fa-sign-in-alt"></i> লগইন / সাইনআপ</div><div class="sidebar-item" onclick="openModal('about-modal')"><i class="fas fa-info-circle"></i> আমাদের সম্পর্কে</div></div>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Header -->
+    <div class="header">
+        <i class="fas fa-bars menu-icon" onclick="toggleSidebar()"></i>
+        <h2 id="app-name-top" style="margin:0; font-size: 22px;">SMM MASTER</h2>
+        <p id="app-sub-text" style="opacity: 0.9; font-size: 13px;">সেরা সার্ভিস, সাশ্রয়ী দাম</p>
+    </div>
+
+    <!-- Balance Section -->
+    <div class="wallet-card">
+        <div><small style="color: #636e72;">ব্যালেন্স</small><h3 id="balance-val">৳ 0.00</h3></div>
+        <button class="confirm-btn" style="width: auto; padding: 10px 18px; margin:0;" onclick="checkAuthAndOpen('deposit-modal')">Add Money</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-box"><small>মোট অর্ডার</small><b id="stat-total">0</b></div>
+        <div class="stat-box"><small>পেন্ডিং</small><b id="stat-pending" style="color:#f39c12;">0</b></div>
+        <div class="stat-box"><small>সফল</small><b id="stat-success" style="color:var(--success);">0</b></div>
+    </div>
+
+    <!-- Notice -->
+    <div class="notice-container"><i class="fas fa-bullhorn" style="color: var(--primary);"></i><marquee id="marquee-notice" style="width: 80%;">লোড হচ্ছে...</marquee></div>
+
+    <!-- Categories -->
+    <div class="grid-container">
+        <div class="cat-card" onclick="selectCategory('facebook', this)"><div class="icon-box"><img src="https://cdn-icons-png.flaticon.com/512/124/124010.png"></div><span>Facebook</span></div>
+        <div class="cat-card" onclick="selectCategory('tiktok', this)"><div class="icon-box"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png"></div><span>TikTok</span></div>
+        <div class="cat-card" onclick="selectCategory('youtube', this)"><div class="icon-box"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png"></div><span>YouTube</span></div>
+        <div class="cat-card" onclick="selectCategory('instagram', this)"><div class="icon-box"><img src="https://cdn-icons-png.flaticon.com/512/174/174855.png"></div><span>Instagram</span></div>
+        <div class="cat-card" onclick="selectCategory('telegram', this)"><div class="icon-box"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png"></div><span>Telegram</span></div>
+        <div class="cat-card" onclick="openFreeTask()"><div class="icon-box"><img src="https://cdn-icons-png.flaticon.com/512/2169/2169864.png"></div><span>Free</span></div>
+    </div>
+
+    <div id="main-display"></div>
+
+    <!-- Free Task Modal -->
+    <div id="free-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin:0; color:var(--primary);">ফ্রি সার্ভিস</h3>
+            <p style="font-size:13px;">লিংকে গিয়ে লাইক/কমেন্ট করুন (ঐচ্ছিক)। ২৪ ঘণ্টায় একবার নিতে পারবেন।</p>
+            <button class="confirm-btn" onclick="window.open(adminSettings.free_link || '#', '_blank')" style="background:#3498db; margin-bottom: 10px;">লিংকে যান</button>
+            <div style="border-top: 1px solid #eee; padding-top: 10px;">
+                <select id="free-type"><option value="Facebook 20 Like">Facebook 20 Like</option><option value="Facebook 20 Love">Facebook 20 Love</option><option value="Facebook 20 Care">Facebook 20 Care</option></select>
+                <input type="text" id="free-link-input" placeholder="আপনার পোস্ট লিংক দিন">
+                <button class="confirm-btn" onclick="submitFreeOrder()">অর্ডার সাবমিট করুন</button>
+            </div>
+            <button onclick="closeModal('free-modal')" style="border:none; width:100%; color:red; background:none; margin-top:10px; cursor:pointer;">Close Now </button>
+        </div>
+    </div>
+
+    <!-- Standard Modals -->
+    <div id="about-modal" class="modal"><div class="modal-content"><h3>আমাদের সম্পর্কে</h3><p id="about-text-content"></p><button class="confirm-btn" onclick="closeModal('about-modal')">Close Now </button></div></div>
+    <div id="deposit-modal" class="modal"><div class="modal-content"><h3>Add Money</h3><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"><div id="m-bkash" onclick="setMethod('Bkash')" style="border:2px solid #eee; padding:12px; border-radius:15px; text-align:center; cursor:pointer;">BKASH</div><div id="m-nagad" onclick="setMethod('Nagad')" style="border:2px solid #eee; padding:12px; border-radius:15px; text-align:center; cursor:pointer;">NAGAD</div></div><p id="method-text" style="background:#f8f9fa; padding:10px; margin-top:10px; border-radius:10px; font-size:12px; text-align:center; border: 1px solid #eee;"></p><input type="number" id="dep-amount" placeholder="টাকার পরিমাণ"><input type="text" id="dep-trx" placeholder="Transaction ID"><button class="confirm-btn" onclick="submitDeposit()">রিকোয়েস্ট পাঠান</button><button onclick="closeModal('deposit-modal')" style="border:none; width:100%; color:red; background:none; margin-top:10px;">Close Now </button></div></div>
+    <div id="auth-modal" class="modal"><div class="modal-content"><h3 id="auth-title">লগইন</h3><div id="login-box"><input type="number" id="login-phone" placeholder="ফোন"><input type="password" id="login-pass" placeholder="পাসওয়ার্ড"><button class="confirm-btn" onclick="handleLogin()">লগইন</button><p onclick="toggleAuth(false)" style="text-align:center; color:blue; font-size:12px; margin-top:10px; cursor:pointer;">নতুন অ্যাকাউন্ট তৈরি করুন</p></div><div id="signup-box" class="hidden"><input type="text" id="reg-name" placeholder="নাম"><input type="number" id="reg-phone" placeholder="ফোন"><input type="password" id="reg-pass" placeholder="পাসওয়ার্ড"><button class="confirm-btn" onclick="handleSignup()">সাইনআপ</button><p onclick="toggleAuth(true)" style="text-align:center; color:blue; font-size:12px; margin-top:10px; cursor:pointer;">লগইন করুন</p></div><button onclick="closeModal('auth-modal')" style="border:none; width:100%; color:red; background:none; margin-top:10px;">Close Now </button></div></div>
+    <div id="order-modal" class="modal"><div class="modal-content"><h3 id="order-service-name"></h3><p id="order-price-text"></p><input type="text" id="order-link" placeholder="লিংক দিন"><input type="number" id="order-qty" placeholder="পরিমাণ" oninput="calculateTotal()"><h4 id="total-price-view">৳ 0.00</h4><button class="confirm-btn" onclick="confirmOrder()">অর্ডার কনফার্ম</button><button onclick="closeModal('order-modal')" style="border:none; width:100%; color:red; background:none; margin-top:10px;">Close Now </button></div></div>
+
+    <a id="wa-float-link" href="#" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyDYZeQsbcbNwKztZIbtx9f0R_nfjZSX01k", authDomain: "bdhack-54132.firebaseapp.com", databaseURL: "https://bdhack-54132-default-rtdb.firebaseio.com", projectId: "bdhack-54132", storageBucket: "bdhack-54132.firebasestorage.app", messagingSenderId: "767198925219", appId: "1:767198925219:web:a520f9a52c4146f1720a16" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let currentUser = localStorage.getItem('smm_user');
+        let activeSrv = null, selectedMethod = 'Bkash', adminSettings = {};
+
+        window.onload = () => { fetchAdminSettings(); if(currentUser) setupUser(); };
+
+        function showMsg(msg) { document.getElementById('c-alert-msg').innerText = msg; document.getElementById('c-alert').style.display = 'flex'; }
+        function closeAlert() { document.getElementById('c-alert').style.display = 'none'; }
+
+        function fetchAdminSettings() {
+            db.ref('admin/settings').on('value', snap => {
+                adminSettings = snap.val() || {};
+                if(adminSettings.theme_color) document.getElementById('admin-theme').innerHTML = `:root { --primary: ${adminSettings.theme_color}; --success: #00b894; --dark: #2d3436; }`;
+                if(adminSettings.app_name) document.getElementById('app-name-top').innerText = adminSettings.app_name;
+                if(adminSettings.app_sub_text) document.getElementById('app-sub-text').innerText = adminSettings.app_sub_text;
+                if(adminSettings.notice) document.getElementById('marquee-notice').innerText = adminSettings.notice;
+                if(adminSettings.about_text) document.getElementById('about-text-content').innerText = adminSettings.about_text;
+                if(adminSettings.support_wa) {
+                    let waUrl = "https://wa.me/" + adminSettings.support_wa.replace(/\s/g, '');
+                    document.getElementById('wa-float-link').href = waUrl;
+                    document.getElementById('side-support-btn').onclick = () => { toggleSidebar(); window.open(waUrl, '_blank'); };
+                }
+                if(adminSettings.yt_tutorial) document.getElementById('side-yt-btn').onclick = () => { toggleSidebar(); window.open(adminSettings.yt_tutorial, '_blank'); };
+                if(adminSettings.how_to_use) document.getElementById('side-how-to-btn').onclick = () => { toggleSidebar(); window.open(adminSettings.how_to_use, '_blank'); };
+                if(adminSettings.tg_channel) document.getElementById('side-tg-btn').onclick = () => { toggleSidebar(); window.open(adminSettings.tg_channel, '_blank'); };
+                updateDepositNum();
+            });
+        }
+
+        // --- Free Service 24H Lock Logic ---
+        function openFreeTask() { 
+            if(!currentUser) return openModal('auth-modal');
+            if(adminSettings.free_status === "OFF") return showMsg("বর্তমানে ফ্রি সার্ভিস বন্ধ আছে");
+
+            db.ref('users/' + currentUser + '/last_free_claim').once('value', snap => {
+                let lastClaim = snap.val() || 0;
+                let now = Date.now();
+                if (now - lastClaim < 86400000) {
+                    let rem = 86400000 - (now - lastClaim);
+                    let h = Math.floor(rem / 3600000);
+                    let m = Math.floor((rem % 3600000) / 60000);
+                    showMsg(`আপনি ২৪ ঘণ্টায় একবার নিতে পারবেন। আবার নিতে ${h} ঘণ্টা ${m} মিনিট অপেক্ষা করুন।`);
+                } else {
+                    openModal('free-modal');
+                }
+            });
+        }
+
+        function submitFreeOrder() {
+            let link = document.getElementById('free-link-input').value.trim();
+            if(!link) return showMsg("আপনার পোস্ট লিংক দিন"); 
+            let type = document.getElementById('free-type').value;
+            let oid = Math.floor(1000 + Math.random() * 8999);
+            
+            db.ref('orders/' + oid).set({ id:oid, user:currentUser, service:type, qty:20, cost:0, link:link, status:"Pending", time: new Date().toLocaleString() }).then(() => {
+                db.ref('users/' + currentUser).update({ last_free_claim: Date.now() });
+                showMsg("সফল! আপনার ফ্রি অর্ডার পেন্ডিং এ আছে।"); 
+                closeModal('free-modal');
+            });
+        }
+
+        // --- Basic Functions ---
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').style.display = document.getElementById('sidebar').classList.contains('active') ? 'block' : 'none'; }
+        function setupUser() { db.ref('users/' + currentUser).on('value', snap => { let u = snap.val(); if(u) { document.getElementById('balance-val').innerText = "৳ " + (u.balance || 0).toFixed(2); document.getElementById('side-name').innerText = u.name; document.getElementById('side-phone').innerText = u.phone; document.getElementById('side-logged-in').classList.remove('hidden'); document.getElementById('side-logged-out').classList.add('hidden'); loadUserStats(); } }); }
+        function loadUserStats() { db.ref('orders').orderByChild('user').equalTo(currentUser).on('value', snap => { let t = 0, p = 0, s = 0; snap.forEach(c => { let o = c.val(); t++; if(o.status === "Pending") p++; if(o.status === "Success" || o.status === "Completed") s++; }); document.getElementById('stat-total').innerText = t; document.getElementById('stat-pending').innerText = p; document.getElementById('stat-success').innerText = s; }); }
+        function selectCategory(cat, el) { document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active-cat')); el.classList.add('active-cat'); loadCategory(cat); }
+        function loadCategory(cat) { const display = document.getElementById('main-display'); display.innerHTML = "<p style='text-align:center; padding:20px;'>লোডিং...</p>"; db.ref('services/' + cat).on('value', snap => { display.innerHTML = `<h3 style="margin:20px; font-size:16px; text-transform:uppercase;">${cat} সার্ভিসসমূহ</h3>`; if(!snap.exists()) display.innerHTML += "<p style='margin-left:20px'>কোনো সার্ভিস নেই</p>"; snap.forEach(child => { let s = child.val(); display.innerHTML += `<div class="service-item"><div class="service-info"><b>${s.name}</b><span>৳ ${s.price} প্রতি ১০০০ পিস </span></div><button class="order-btn" onclick="openOrderModal('${child.key}', '${s.name}', ${s.price})">অর্ডার</button></div>`; }); }); }
+        function openOrderModal(id, n, p) { if(!currentUser) return openModal('auth-modal'); activeSrv={id,name:n,price:p}; document.getElementById('order-service-name').innerText=n; document.getElementById('order-price-text').innerText="৳"+p+" প্রতি ১০০০ পিস "; openModal('order-modal'); }
+        function calculateTotal() { let q=document.getElementById('order-qty').value||0; document.getElementById('total-price-view').innerText="মোট: ৳ "+((q/1000)*activeSrv.price).toFixed(2); }
+        function confirmOrder() { let q = parseInt(document.getElementById('order-qty').value), link = document.getElementById('order-link').value; let total = (q / 1000) * activeSrv.price, min = adminSettings.min_order || 500; if(q < min) return showMsg("নূন্যতম " + min + " অর্ডার করুন"); if(!link) return showMsg("লিংক দিন!"); db.ref('users/' + currentUser + '/balance').once('value', s => { let bal = s.val() || 0; if(bal < total) return showMsg("ব্যালেন্স নেই!"); let oid = Math.floor(1000 + Math.random() * 8999); db.ref('orders/' + oid).set({ id:oid, user:currentUser, service:activeSrv.name, qty:q, cost:total, link:link, status:"Pending", time: new Date().toLocaleString() }).then(() => { db.ref('users/' + currentUser + '/balance').set(bal - total); showMsg("সফল! আইডি: #" + oid); closeModal('order-modal'); }); }); }
+        function setMethod(m) { selectedMethod=m; document.getElementById('m-bkash').style.borderColor=m==='Bkash'?'var(--primary)':'#eee'; document.getElementById('m-nagad').style.borderColor=m==='Nagad'?'var(--primary)':'#eee'; updateDepositNum(); }
+        function updateDepositNum() { let num = selectedMethod==='Bkash'?adminSettings.bkash_num:adminSettings.nagad_num; document.getElementById('method-text').innerHTML=`${selectedMethod} নম্বর: <b>${num||'লোড হচ্ছে'}</b> (Personal)`; }
+        function submitDeposit() { let a=document.getElementById('dep-amount').value, t=document.getElementById('dep-trx').value; if(a<30) return showMsg("নূন্যতম ৩০ টাকা"); db.ref('deposits').push({user:currentUser, amount:parseFloat(a), trx:t, method:selectedMethod, status:"Pending", time:new Date().toLocaleString()}); showMsg("রিকোয়েস্ট পাঠানো হয়েছে"); closeModal('deposit-modal'); }
+        function handleLogin() { let p=document.getElementById('login-phone').value, ps=document.getElementById('login-pass').value; db.ref('users/'+p).once('value', s=>{ if(s.exists()&&s.val().password===ps){localStorage.setItem('smm_user', p); location.reload();} else showMsg("ভুল তথ্য!"); }); }
+        function handleSignup() { let n=document.getElementById('reg-name').value, p=document.getElementById('reg-phone').value, ps=document.getElementById('login-pass').value; db.ref('users/'+p).set({name:n, phone:p, password:ps, balance:0}).then(()=> {showMsg("সফল! লগইন করুন"); toggleAuth(true);}); }
+        function toggleAuth(isL) { document.getElementById('auth-title').innerText=isL?"লগইন":"রেজিস্ট্রেশন"; document.getElementById('login-box').classList.toggle('hidden', !isL); document.getElementById('signup-box').classList.toggle('hidden', isL); }
+        function shareApp() { if(navigator.share) { navigator.share({ title: 'SMM Master Pro', text: 'সেরা দামে সার্ভিস নিতে আজই ডাউনলোড করুন!', url: window.location.href }); } else { showMsg("আপনার ব্রাউজারে শেয়ার সাপোর্ট করে না"); } }
+        function showHistory() { toggleSidebar(); const display = document.getElementById('main-display'); display.innerHTML = "<h3 style='margin:20px;'>অর্ডার হিস্ট্রি</h3>"; db.ref('orders').orderByChild('user').equalTo(currentUser).on('value', snap => { snap.forEach(c => { let o = c.val(); display.innerHTML += `<div class="service-item" style="flex-direction:column; align-items:start;"><div style="width:100%; display:flex; justify-content:space-between;"><b>#${o.id}</b><span style="color:${o.status==='Pending'?'orange':o.status==='Cancelled'?'red':'green'}">${o.status}</span></div><small>${o.service} | ৳${o.cost.toFixed(2)}</small></div>`; }); }); }
+        function checkAuthAndOpen(mId) { if(!currentUser) openModal('auth-modal'); else openModal(mId); }
+        function openModal(id) { document.getElementById(id).style.display='flex'; }
+        function closeModal(id) { document.getElementById(id).style.display='none'; }
+        function logout() { localStorage.removeItem('smm_user'); location.reload(); }
+    </script>
+</body>
+</html>
