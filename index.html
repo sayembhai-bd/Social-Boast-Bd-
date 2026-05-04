@@ -97,7 +97,7 @@
         </div>
         <div id="side-logged-in" class="hidden">
             <div class="sidebar-item" onclick="showHistory()"><i class="fas fa-shopping-cart"></i> আমার অর্ডারসমূহ</div>
-            <div class="sidebar-item" onclick="openModal('deposit-modal')"><i class="fas fa-wallet"></i> Add Money</div>
+            <div class="sidebar-item" onclick="openModal('deposit-modal')"><i class="fas fa-wallet"></i> ADD MONEY </div>
             <div class="sidebar-item" onclick="openModal('about-modal')"><i class="fas fa-info-circle"></i> আমাদের সম্পর্কে</div>
             <div class="sidebar-item" id="side-support-btn"><i class="fab fa-whatsapp"></i> কাস্টমার সাপোর্ট</div>
             <div class="sidebar-item" id="side-how-to-btn"><i class="fas fa-book"></i> ব্যবহার বিধি (Video)</div>
@@ -120,7 +120,7 @@
     <!-- Balance Section -->
     <div class="wallet-card">
         <div><small style="color: #636e72;">ব্যালেন্স</small><h3 id="balance-val">৳ 0.00</h3></div>
-        <button class="confirm-btn" style="width: auto; padding: 10px 18px; margin:0;" onclick="checkAuthAndOpen('deposit-modal')">Add Money</button>
+        <button class="confirm-btn" style="width: auto; padding: 10px 18px; margin:0;" onclick="checkAuthAndOpen('deposit-modal')">ADD MONEY </button>
     </div>
 
     <!-- Stats -->
@@ -162,7 +162,7 @@
 
     <!-- Standard Modals -->
     <div id="about-modal" class="modal"><div class="modal-content"><h3>আমাদের সম্পর্কে</h3><p id="about-text-content"></p><button class="confirm-btn" onclick="closeModal('about-modal')">Close Now </button></div></div>
-    <div id="deposit-modal" class="modal"><div class="modal-content"><h3>Add Money</h3><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"><div id="m-bkash" onclick="setMethod('Bkash')" style="border:2px solid #eee; padding:12px; border-radius:15px; text-align:center; cursor:pointer;">BKASH</div><div id="m-nagad" onclick="setMethod('Nagad')" style="border:2px solid #eee; padding:12px; border-radius:15px; text-align:center; cursor:pointer;">NAGAD</div></div><p id="method-text" style="background:#f8f9fa; padding:10px; margin-top:10px; border-radius:10px; font-size:12px; text-align:center; border: 1px solid #eee;"></p><input type="number" id="dep-amount" placeholder="টাকার পরিমাণ"><input type="text" id="dep-trx" placeholder="Transaction ID"><button class="confirm-btn" onclick="submitDeposit()">রিকোয়েস্ট পাঠান</button><button onclick="closeModal('deposit-modal')" style="border:none; width:100%; color:red; background:none; margin-top:10px;">Close Now </button></div></div>
+    <div id="deposit-modal" class="modal"><div class="modal-content"><h3>ADD MONEY </h3><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"><div id="m-bkash" onclick="setMethod('Bkash')" style="border:2px solid #eee; padding:12px; border-radius:15px; text-align:center; cursor:pointer;">BKASH</div><div id="m-nagad" onclick="setMethod('Nagad')" style="border:2px solid #eee; padding:12px; border-radius:15px; text-align:center; cursor:pointer;">NAGAD</div></div><p id="method-text" style="background:#f8f9fa; padding:10px; margin-top:10px; border-radius:10px; font-size:12px; text-align:center; border: 1px solid #eee;"></p><input type="number" id="dep-amount" placeholder="টাকার পরিমাণ"><input type="text" id="dep-trx" placeholder="Transaction ID"><button class="confirm-btn" onclick="submitDeposit()">রিকোয়েস্ট পাঠান</button><button onclick="closeModal('deposit-modal')" style="border:none; width:100%; color:red; background:none; margin-top:10px;">Close Now </button></div></div>
     <div id="auth-modal" class="modal"><div class="modal-content"><h3 id="auth-title">লগইন</h3><div id="login-box"><input type="number" id="login-phone" placeholder="ফোন"><input type="password" id="login-pass" placeholder="পাসওয়ার্ড"><button class="confirm-btn" onclick="handleLogin()">লগইন</button><p onclick="toggleAuth(false)" style="text-align:center; color:blue; font-size:12px; margin-top:10px; cursor:pointer;">নতুন অ্যাকাউন্ট তৈরি করুন</p></div><div id="signup-box" class="hidden"><input type="text" id="reg-name" placeholder="নাম"><input type="number" id="reg-phone" placeholder="ফোন"><input type="password" id="reg-pass" placeholder="পাসওয়ার্ড"><button class="confirm-btn" onclick="handleSignup()">সাইনআপ</button><p onclick="toggleAuth(true)" style="text-align:center; color:blue; font-size:12px; margin-top:10px; cursor:pointer;">লগইন করুন</p></div><button onclick="closeModal('auth-modal')" style="border:none; width:100%; color:red; background:none; margin-top:10px;">Close Now </button></div></div>
     <div id="order-modal" class="modal"><div class="modal-content"><h3 id="order-service-name"></h3><p id="order-price-text"></p><input type="text" id="order-link" placeholder="লিংক দিন"><input type="number" id="order-qty" placeholder="পরিমাণ" oninput="calculateTotal()"><h4 id="total-price-view">৳ 0.00</h4><button class="confirm-btn" onclick="confirmOrder()">অর্ডার কনফার্ম</button><button onclick="closeModal('order-modal')" style="border:none; width:100%; color:red; background:none; margin-top:10px;">Close Now </button></div></div>
 
