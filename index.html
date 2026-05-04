@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SMM Master Pro</title>
+    <title>𝗦𝗼𝗰𝗶𝗮𝗹 𝗕𝗼𝗮𝘀𝘁 𝗕𝗱</title>
     <!-- Firebase Libraries -->
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
@@ -244,8 +245,34 @@
         function setMethod(m) { selectedMethod=m; document.getElementById('m-bkash').style.borderColor=m==='Bkash'?'var(--primary)':'#eee'; document.getElementById('m-nagad').style.borderColor=m==='Nagad'?'var(--primary)':'#eee'; updateDepositNum(); }
         function updateDepositNum() { let num = selectedMethod==='Bkash'?adminSettings.bkash_num:adminSettings.nagad_num; document.getElementById('method-text').innerHTML=`${selectedMethod} নম্বর: <b>${num||'লোড হচ্ছে'}</b> (Personal)`; }
         function submitDeposit() { let a=document.getElementById('dep-amount').value, t=document.getElementById('dep-trx').value; if(a<30) return showMsg("নূন্যতম ৩০ টাকা"); db.ref('deposits').push({user:currentUser, amount:parseFloat(a), trx:t, method:selectedMethod, status:"Pending", time:new Date().toLocaleString()}); showMsg("রিকোয়েস্ট পাঠানো হয়েছে"); closeModal('deposit-modal'); }
-        function handleLogin() { let p=document.getElementById('login-phone').value, ps=document.getElementById('login-pass').value; db.ref('users/'+p).once('value', s=>{ if(s.exists()&&s.val().password===ps){localStorage.setItem('smm_user', p); location.reload();} else showMsg("ভুল তথ্য!"); }); }
-        function handleSignup() { let n=document.getElementById('reg-name').value, p=document.getElementById('reg-phone').value, ps=document.getElementById('login-pass').value; db.ref('users/'+p).set({name:n, phone:p, password:ps, balance:0}).then(()=> {showMsg("সফল! লগইন করুন"); toggleAuth(true);}); }
+        
+        // --- Fixed Login & Signup logic ---
+        function handleLogin() { 
+            let p=document.getElementById('login-phone').value; 
+            let ps=document.getElementById('login-pass').value; 
+            db.ref('users/'+p).once('value', s=>{ 
+                if(s.exists() && s.val().password == ps){
+                    localStorage.setItem('smm_user', p); 
+                    location.reload();
+                } else {
+                    showMsg("ভুল ফোন নম্বর বা পাসওয়ার্ড!"); 
+                }
+            }); 
+        }
+
+        function handleSignup() { 
+            let n=document.getElementById('reg-name').value; 
+            let p=document.getElementById('reg-phone').value; 
+            let ps=document.getElementById('reg-pass').value; 
+            
+            if(!n || !p || !ps) return showMsg("সব তথ্য সঠিক ভাবে দিন");
+
+            db.ref('users/'+p).set({name:n, phone:p, password:ps, balance:0}).then(()=> {
+                showMsg("সফল! লগইন করুন"); 
+                toggleAuth(true);
+            }); 
+        }
+
         function toggleAuth(isL) { document.getElementById('auth-title').innerText=isL?"লগইন":"রেজিস্ট্রেশন"; document.getElementById('login-box').classList.toggle('hidden', !isL); document.getElementById('signup-box').classList.toggle('hidden', isL); }
         function shareApp() { if(navigator.share) { navigator.share({ title: 'SMM Master Pro', text: 'সেরা দামে সার্ভিস নিতে আজই ডাউনলোড করুন!', url: window.location.href }); } else { showMsg("আপনার ব্রাউজারে শেয়ার সাপোর্ট করে না"); } }
         function showHistory() { toggleSidebar(); const display = document.getElementById('main-display'); display.innerHTML = "<h3 style='margin:20px;'>অর্ডার হিস্ট্রি</h3>"; db.ref('orders').orderByChild('user').equalTo(currentUser).on('value', snap => { snap.forEach(c => { let o = c.val(); display.innerHTML += `<div class="service-item" style="flex-direction:column; align-items:start;"><div style="width:100%; display:flex; justify-content:space-between;"><b>#${o.id}</b><span style="color:${o.status==='Pending'?'orange':o.status==='Cancelled'?'red':'green'}">${o.status}</span></div><small>${o.service} | ৳${o.cost.toFixed(2)}</small></div>`; }); }); }
