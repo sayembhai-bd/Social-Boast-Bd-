@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -6,114 +7,779 @@
     <title id="app-title">𝗦𝗼𝗰𝗶𝗮𝗹 𝗕𝗼𝗮𝘀𝘁 𝗕𝗱</title>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style id="admin-theme">
-        :root { --primary: #6c5ce7; --secondary: #8e82ff; --success: #00b894; --dark: #2d3436; --bg: #f4f7f6; }
+        /* CSS Variables Supporting Light/Dark Theme Switching */
+        :root { 
+            --primary: #1877F2; 
+            --secondary: #6c5ce7; 
+            --success: #2ecc71; 
+            --dark-header: #111625; 
+            
+            /* Light Theme Values */
+            --bg: #F5F7FB; 
+            --card-bg: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #7f8c8d;
+            --card-border: #FFDFB9;
+            --input-bg: #ebf0f5;
+            --input-border: #e2e8f0;
+            --dropdown-bg: #ffffff;
+        }
+
+        body.dark-mode {
+            /* Dark Theme Values */
+            --bg: #0b0f19; 
+            --card-bg: #111625;
+            --text-primary: #f5f6fa;
+            --text-secondary: #a4b0be;
+            --card-border: #2c3e50;
+            --input-bg: #1c2333;
+            --input-border: #2c3e50;
+            --dropdown-bg: #111625;
+        }
     </style>
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 80px; overflow-x: hidden; }
-
-        /* Header */
-        .header { background: linear-gradient(135deg, var(--primary), #8e44ad); color: white; padding: 50px 20px 80px; text-align: center; border-radius: 0 0 40px 40px; position: relative; }
-        .menu-icon { position: absolute; top: 25px; left: 20px; font-size: 24px; cursor: pointer; }
-
-        /* Sidebar */
-        .sidebar { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: white; z-index: 9500; box-shadow: 5px 0 25px rgba(0,0,0,0.2); overflow-y: auto; transition: 0.4s; }
-        .sidebar.active { left: 0; }
-        .side-header { padding: 40px 20px; background: #f8f9fa; text-align: center; border-bottom: 1px solid #eee; }
-        .sidebar-item { padding: 15px 25px; border-bottom: 1px solid #f8f9fa; display: flex; align-items: center; gap: 15px; font-weight: 500; cursor: pointer; color: #444; width: 100%; box-sizing: border-box; }
-        .sidebar-item i { width: 20px; text-align: center; color: var(--primary); }
-
-        /* Wallet & Stats */
-        .wallet-card { background: white; margin: -45px 20px 20px; padding: 22px; border-radius: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; z-index: 10; }
-        .wallet-card h3 { margin: 0; color: var(--primary); font-size: 24px; font-weight: 700; }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
         
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 20px; margin-bottom: 15px; }
-        .stat-box { background: white; padding: 12px 5px; border-radius: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
-        .stat-box small { font-size: 11px; color: #7f8c8d; display: block; margin-bottom: 2px; }
-        .stat-box b { font-size: 18px; color: var(--dark); display: block; }
+        * {
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
 
-        /* Notice Boxes */
-        .home-notice-box { background: #fff3cd; color: #856404; margin: 10px 20px 10px; padding: 15px; border-radius: 20px; border-left: 6px solid #ffc107; font-size: 13px; font-weight: 500; display: none; }
-        #home-notice-box-2 { background: #d1ecf1; color: #0c5460; border-left-color: #17a2b8; margin-top: 5px; }
+        body { 
+            background-color: var(--bg); 
+            margin: 0; 
+            padding-bottom: 100px; 
+            overflow-x: hidden; 
+            color: var(--text-primary);
+        }
 
-        /* Category Grid */
-        .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 10px 20px; }
-        .cat-card { background: white; padding: 15px 5px; border-radius: 18px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 2.5px solid transparent; }
-        .cat-card img { width: 32px; height: 32px; margin-bottom: 5px; }
-        .cat-card span { font-size: 11px; font-weight: 600; display: block; }
+        /* Scaled-down Compact Premium Header */
+        .ajker-header {
+            background-color: var(--dark-header);
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
 
-        /* Service Cards */
-        .service-card { background: white; margin: 15px 20px; padding: 20px; border-radius: 25px; position: relative; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }
-        .ribbon { position: absolute; top: 15px; right: -35px; background: var(--success); color: white; padding: 5px 40px; font-size: 10px; font-weight: bold; transform: rotate(45deg); z-index: 1; }
-        .srv-name { font-size: 16px; font-weight: 600; color: #333; margin-bottom: 10px; display: block; }
-        .srv-price-tag { background: #f0edff; color: var(--primary); font-size: 12px; font-weight: 700; padding: 5px 15px; border-radius: 10px; display: inline-block; margin-bottom: 20px; }
-        .buy-btn-full { width: 100%; background: var(--secondary); color: white; border: none; padding: 14px; border-radius: 15px; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 60%;
+        }
 
-        /* Centered Alert Fix */
-        .c-alert { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 20000; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
-        .c-alert-box { background: white; padding: 30px; border-radius: 30px; width: 90%; max-width: 320px; text-align: center; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .menu-btn {
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            padding-right: 5px;
+        }
 
-        /* Modals */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center; }
-        .modal-content { background: white; width: 90%; max-width: 380px; padding: 25px; border-radius: 30px; box-sizing: border-box; overflow: hidden; }
-        input, select { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #eee; border-radius: 15px; background: #f9f9f9; box-sizing: border-box; outline: none; }
-        .confirm-btn { background: var(--primary); color: white; width: 100%; padding: 14px; border: none; border-radius: 18px; font-weight: 600; cursor: pointer; }
+        .logo {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            white-space: nowrap; /* Forces Brand Name into a single line */
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-        /* Premium Method Buttons */
-        .method-flex { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .m-btn { border: 2px solid #eee; padding: 12px; border-radius: 15px; text-align: center; cursor: pointer; font-weight: 600; transition: 0.3s; }
-        .m-btn.active-bk { border-color: #e2136e; color: #e2136e; background: #fdf1f6; }
-        .m-btn.active-ng { border-color: #f7941d; color: #f7941d; background: #fff8f0; }
+        .logo span {
+            white-space: nowrap;
+        }
 
-        /* Promo Code Box */
-        .promo-container { margin-top: 15px; padding: 15px; background: #fff; border: 2px dashed var(--primary); border-radius: 20px; box-sizing: border-box; }
-        .promo-flex { display: flex; gap: 8px; }
-        .promo-flex input { flex: 1; margin: 0; }
-        .promo-flex button { background: var(--primary); border: none; color: white; border-radius: 12px; padding: 0 15px; font-weight: 600; cursor: pointer; }
+        .logo span:first-child {
+            color: #2ecc71;
+        }
 
-        /* Free Service Page Styling */
-        #free-service-page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f8f9fa; z-index: 9999; overflow-y: auto; }
-        .free-header { background: var(--primary); color: white; padding: 20px; display: flex; align-items: center; gap: 15px; font-weight: 600; }
-        .free-dynamic-text { padding: 20px 25px 0; font-size: 14px; font-weight: 500; color: #555; text-align: center; line-height: 1.5; }
-        .react-box { background: white; padding: 15px 5px; border-radius: 20px; text-align: center; border: 2px solid #eee; cursor: pointer; box-sizing: border-box; }
-        .react-box.selected { border-color: var(--primary); background: #f0edff; }
-        .emoji-coded { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 22px; color: white; }
+        .logo span:last-child {
+            color: #3498db;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Theme Toggle Element */
+        .theme-toggle-container {
+            display: flex;
+            align-items: center;
+            background: #1e273a;
+            border-radius: 15px;
+            padding: 4px 8px;
+            gap: 6px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle-icon {
+            font-size: 12px;
+            color: #a4b0be;
+        }
+
+        .toggle-icon.active {
+            color: #f1c40f;
+        }
+
+        /* Clean Fallback Vector Circle for User Avatar */
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #2ecc71;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #2c3e50;
+            color: #2ecc71;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Sidebar Navigation drawer */
+        .sidebar { 
+            position: fixed; 
+            top: 0; 
+            left: -300px; 
+            width: 280px; 
+            height: 100%; 
+            background: var(--card-bg); 
+            z-index: 9500; 
+            box-shadow: 5px 0 25px rgba(0,0,0,0.2); 
+            overflow-y: auto; 
+            transition: left 0.4s ease; 
+        }
+        .sidebar.active { 
+            left: 0; 
+        }
+        .side-header { 
+            padding: 40px 20px; 
+            background: rgba(0,0,0,0.05); 
+            text-align: center; 
+            border-bottom: 1px solid var(--input-border); 
+        }
+        .sidebar-item { 
+            padding: 15px 25px; 
+            border-bottom: 1px solid var(--input-border); 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            font-weight: 500; 
+            cursor: pointer; 
+            color: var(--text-primary); 
+            width: 100%; 
+            box-sizing: border-box; 
+        }
+        .sidebar-item i { 
+            width: 20px; 
+            text-align: center; 
+            color: var(--secondary); 
+        }
+
+        /* Main Dashboard Panel Stats Grid */
+        .panel-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 20px 20px 10px;
+        }
+
+        .p-stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .p-stat-icon {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .p-stat-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .p-stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .p-stat-value {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-primary);
+            word-break: break-all;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Icon category selection tab slider */
+        .icon-grid-bar {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 20px 15px;
+            scrollbar-width: none;
+        }
+
+        .icon-grid-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .icon-tab {
+            min-width: 48px;
+            height: 44px;
+            background: var(--card-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            color: var(--text-primary);
+        }
+
+        .icon-tab.active {
+            background: rgba(24, 119, 242, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .icon-tab.fb { color: #1877f2; }
+        .icon-tab.ig { color: #e1306c; }
+        .icon-tab.tg { color: #0088cc; }
+        .icon-tab.tt { color: #000000; }
+        body.dark-mode .icon-tab.tt { color: #ffffff; }
+        .icon-tab.yt { color: #ff0000; }
+        .icon-tab.tw { color: #6441a5; }
+        .icon-tab.in { color: #0077b5; }
+        .icon-tab.x { color: #000000; }
+        body.dark-mode .icon-tab.x { color: #ffffff; }
+        .icon-tab.wa { color: #25d366; }
+        .icon-tab.sp { color: #1db954; }
+        .icon-tab.plus { color: #e67e22; background: rgba(230, 126, 34, 0.1); border-color: #e67e22; }
+
+        /* Action Pill Buttons Row */
+        .action-pill-row {
+            display: flex;
+            gap: 12px;
+            padding: 0 20px 15px;
+        }
+
+        .pill-btn {
+            flex: 1;
+            padding: 11px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .pill-btn-blue {
+            background: #1877F2;
+            color: #fff;
+        }
+
+        .pill-btn-outline {
+            background: var(--card-bg);
+            color: #1877F2;
+            border: 1.5px solid #1877F2;
+        }
+
+        /* Search input wrapper box style */
+        .search-container {
+            padding: 0 20px 15px;
+            position: relative;
+        }
+
+        .search-box-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-box-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 12px 12px 42px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        /* Category Selector wrapper */
+        .category-dropdown-container {
+            padding: 0 20px 15px;
+        }
+
+        .category-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .custom-select-box {
+            background: var(--dropdown-bg);
+            border: 1.5px solid var(--input-border);
+            padding: 12px;
+            border-radius: 10px;
+            width: 100%;
+            font-weight: 500;
+            font-size: 13px;
+            color: var(--text-primary);
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Isolated/Separated Special Free Service Card section */
+        .free-service-isolated-zone {
+            margin: 5px 20px 15px;
+            background: linear-gradient(135deg, #ff7675, #6c5ce7);
+            padding: 18px;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .free-service-isolated-zone::before {
+            content: "\f06b";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: -10px;
+            bottom: -15px;
+            font-size: 80px;
+            opacity: 0.15;
+            transform: rotate(-15deg);
+        }
+
+        .free-zone-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin: 0 0 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .free-zone-desc {
+            font-size: 11px;
+            opacity: 0.95;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .free-zone-btn {
+            background: white;
+            color: #6c5ce7;
+            border: none;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* System Orders Status statistics counter */
+        .stats-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 0 20px 20px;
+        }
+
+        .summary-box {
+            background: var(--card-bg);
+            padding: 10px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            border-top: 3px solid var(--secondary);
+        }
+
+        .summary-box small {
+            font-size: 11px;
+            color: var(--text-secondary);
+            display: block;
+        }
+
+        .summary-box b {
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+
+        /* Notices wrapper */
+        .home-notice-box { 
+            background: #fff3cd; 
+            color: #856404; 
+            margin: 0 20px 10px; 
+            padding: 15px; 
+            border-radius: 12px; 
+            border-left: 6px solid #ffc107; 
+            font-size: 13px; 
+            font-weight: 500; 
+            display: none; 
+        }
+        #home-notice-box-2 { 
+            background: #d1ecf1; 
+            color: #0c5460; 
+            border-left-color: #17a2b8; 
+        }
+
+        /* Dynamic Service list Card elements */
+        .service-card { 
+            background: var(--card-bg); 
+            margin: 15px 20px; 
+            padding: 20px; 
+            border-radius: 15px; 
+            position: relative; 
+            overflow: hidden; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
+            border: 1px solid var(--input-border); 
+        }
+        .ribbon { 
+            position: absolute; 
+            top: 15px; 
+            right: -35px; 
+            background: var(--success); 
+            color: white; 
+            padding: 3px 35px; 
+            font-size: 9px; 
+            font-weight: bold; 
+            transform: rotate(45deg); 
+            z-index: 1; 
+        }
+        .srv-name { 
+            font-size: 14px; 
+            font-weight: 600; 
+            color: var(--text-primary); 
+            margin-bottom: 8px; 
+            display: block; 
+            line-height: 1.4;
+        }
+        .srv-price-tag { 
+            background: rgba(108, 92, 231, 0.1); 
+            color: var(--secondary); 
+            font-size: 11px; 
+            font-weight: 700; 
+            padding: 5px 12px; 
+            border-radius: 8px; 
+            display: inline-block; 
+            margin-bottom: 15px; 
+        }
+        .buy-btn-full { 
+            width: 100%; 
+            background: var(--secondary); 
+            color: white; 
+            border: none; 
+            padding: 12px; 
+            border-radius: 10px; 
+            font-weight: 600; 
+            font-size: 14px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+        }
+
+        /* Centered Custom Alert design */
+        .c-alert { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.6); 
+            z-index: 20000; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px; 
+        }
+        .c-alert-box { 
+            background: var(--card-bg); 
+            padding: 25px; 
+            border-radius: 20px; 
+            width: 90%; 
+            max-width: 320px; 
+            text-align: center; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            color: var(--text-primary);
+        }
+
+        /* Dialog Modals design */
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.7); 
+            z-index: 10000; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .modal-content { 
+            background: var(--card-bg); 
+            width: 90%; 
+            max-width: 380px; 
+            padding: 25px; 
+            border-radius: 20px; 
+            box-sizing: border-box; 
+            max-height: 90vh;
+            overflow-y: auto;
+            color: var(--text-primary);
+        }
+        input, select { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 10px 0; 
+            border: 1px solid var(--input-border); 
+            border-radius: 10px; 
+            background: var(--input-bg); 
+            color: var(--text-primary);
+            box-sizing: border-box; 
+            outline: none; 
+        }
+        .confirm-btn { 
+            background: var(--primary); 
+            color: white; 
+            width: 100%; 
+            padding: 12px; 
+            border: none; 
+            border-radius: 12px; 
+            font-weight: 600; 
+            cursor: pointer; 
+        }
+
+        /* Payment selection buttons inside deposit modals */
+        .method-flex { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px; 
+            margin-bottom: 15px; 
+        }
+        .m-btn { 
+            border: 2px solid var(--input-border); 
+            padding: 12px; 
+            border-radius: 10px; 
+            text-align: center; 
+            cursor: pointer; 
+            font-weight: 600; 
+            color: var(--text-primary);
+            background: var(--input-bg);
+        }
+        .m-btn.active-bk { 
+            border-color: #e2136e; 
+            color: #e2136e; 
+            background: #fdf1f6; 
+        }
+        .m-btn.active-ng { 
+            border-color: #f7941d; 
+            color: #f7941d; 
+            background: #fff8f0; 
+        }
+
+        .promo-container { 
+            margin-top: 15px; 
+            padding: 12px; 
+            background: var(--card-bg); 
+            border: 2px dashed var(--primary); 
+            border-radius: 12px; 
+        }
+        .promo-flex { 
+            display: flex; 
+            gap: 8px; 
+        }
+        .promo-flex input { 
+            flex: 1; 
+            margin: 0; 
+        }
+        .promo-flex button { 
+            background: var(--primary); 
+            border: none; 
+            color: white; 
+            border-radius: 8px; 
+            padding: 0 15px; 
+            font-weight: 600; 
+            cursor: pointer; 
+        }
+
+        /* Full Screen Drawer Free Service Page wrapper style */
+        #free-service-page { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: var(--bg); 
+            z-index: 9999; 
+            overflow-y: auto; 
+            color: var(--text-primary);
+        }
+        .free-header { 
+            background: var(--primary); 
+            color: white; 
+            padding: 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            font-weight: 600; 
+        }
+        .free-dynamic-text { 
+            padding: 20px 25px 0; 
+            font-size: 14px; 
+            font-weight: 500; 
+            color: var(--text-secondary); 
+            text-align: center; 
+            line-height: 1.5; 
+        }
+        .react-box { 
+            background: var(--card-bg); 
+            padding: 15px 5px; 
+            border-radius: 15px; 
+            text-align: center; 
+            border: 2px solid var(--input-border); 
+            cursor: pointer; 
+            color: var(--text-primary);
+        }
+        .react-box.selected { 
+            border-color: var(--primary); 
+            background: rgba(24, 119, 242, 0.1); 
+        }
+        .emoji-coded { 
+            width: 38px; 
+            height: 38px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0 auto 8px; 
+            font-size: 20px; 
+        }
         .bg-blue { background: #1877F2; } .bg-red { background: #F33E58; } .bg-yellow { background: #F7B125; }
 
-        .whatsapp-float { position: fixed; bottom: 25px; right: 20px; background: #25d366; color: white; width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; z-index: 8000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-decoration: none; }
+        /* Purple Floating headset helper Support button */
+        .headset-support-float { 
+            position: fixed; 
+            bottom: 25px; 
+            right: 20px; 
+            background: #8e44ad; 
+            color: white; 
+            width: 55px; 
+            height: 55px; 
+            border-radius: 50%; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 24px; 
+            z-index: 8000; 
+            box-shadow: 0 4px 15px rgba(142, 68, 173, 0.4); 
+            text-decoration: none; 
+        }
         .hidden { display: none !important; }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9000; }
-        .copy-btn { background: var(--primary); color: white; border: none; padding: 5px 12px; border-radius: 10px; font-size: 11px; cursor: pointer; margin-top: 5px; }
+        .overlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            z-index: 9000; 
+        }
+        .copy-btn { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 6px 14px; 
+            border-radius: 8px; 
+            font-size: 11px; 
+            cursor: pointer; 
+            margin-top: 8px; 
+        }
     </style>
 </head>
 <body>
 
-    <!-- Centered Alert -->
+    <!-- Centered Custom Alert -->
     <div id="c-alert" class="c-alert">
         <div class="c-alert-box">
-            <p id="c-alert-msg" style="font-weight: 600; color: #333; margin-bottom: 25px;"></p>
+            <p id="c-alert-msg" style="font-weight: 600; margin-bottom: 20px;"></p>
             <button class="confirm-btn" onclick="closeAlert()">ঠিক আছে</button>
         </div>
     </div>
 
-    <!-- Sidebar -->
+    <!-- Sidebar Navigation Drawer -->
     <div class="sidebar" id="sidebar">
         <div class="side-header">
-            <div style="width:70px; height:70px; background:var(--primary); border-radius:50%; margin: 0 auto 10px; display:flex; align-items:center; justify-content:center; color:white; font-size:28px;"><i class="fas fa-user"></i></div>
+            <div style="width:70px; height:70px; background:var(--secondary); border-radius:50%; margin: 0 auto 10px; display:flex; align-items:center; justify-content:center; color:white; font-size:28px;"><i class="fas fa-user"></i></div>
             <b id="side-name">স্বাগতম!</b><br><small id="side-phone">লগইন করুন</small>
         </div>
         <div id="side-logged-in" class="hidden">
             <div class="sidebar-item" onclick="showHistory()"><i class="fas fa-shopping-bag"></i> আমার অর্ডারসমূহ</div>
-            <div class="sidebar-item" onclick="openModal('deposit-modal')"><i class="fas fa-wallet"></i> ADD MONEY </div>
+            <div class="sidebar-item" onclick="openModal('deposit-modal')"><i class="fas fa-wallet"></i> ADD MONEY</div>
             <div class="sidebar-item" onclick="showDepositHistory()"><i class="fas fa-history"></i> ডিপোজিট হিস্ট্রি</div>
             <div class="sidebar-item" onclick="openModal('about-modal')"><i class="fas fa-info-circle"></i> আমাদের সম্পর্কে</div>
             <div class="sidebar-item" id="side-support-btn"><i class="fab fa-whatsapp"></i> কাস্টমার সাপোর্ট</div>
             <div class="sidebar-item" id="side-how-btn"><i class="fas fa-play-circle"></i> ব্যবহার বিধি (Video)</div>
             <div class="sidebar-item" id="side-yt-btn"><i class="fab fa-youtube"></i> ভিডিও টিউটোরিয়াল</div>
             <div class="sidebar-item" id="side-tg-btn"><i class="fab fa-telegram-plane"></i> টেলিগ্রাম চ্যানেল</div>
-            <div class="sidebar-item" onclick="logout()" style="color:red; border-top:1px solid #eee; margin-top:15px;"><i class="fas fa-power-off"></i> লগআউট</div>
+            <div class="sidebar-item" onclick="logout()" style="color:red; border-top:1px solid var(--input-border); margin-top:15px;"><i class="fas fa-power-off"></i> লগআউট</div>
         </div>
         <div id="side-logged-out">
             <div class="sidebar-item" onclick="openModal('auth-modal')"><i class="fas fa-sign-in-alt"></i> লগইন / সাইনআপ</div>
@@ -121,48 +787,136 @@
     </div>
     <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-    <!-- Header -->
-    <div class="header">
-        <i class="fas fa-bars menu-icon" onclick="toggleSidebar()"></i>
-        <h2 id="app-name-top">SMM MASTER</h2>
-        <p style="opacity: 0.9; font-size: 13px;">কোনো সমস্যা হলে সাপোর্ট এ যোগাযোগ করুন</p>
+    <!-- Compact Clean Responsive Header -->
+    <div class="ajker-header">
+        <div class="header-left">
+            <i class="fas fa-bars menu-btn" onclick="toggleSidebar()"></i>
+            <a href="#" class="logo">
+                <i class="fas fa-rocket" style="color:#2ecc71;"></i>
+                <span id="header-brand-name">Social Boast Bd</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <!-- Functional Dark Theme Switching toggler element -->
+            <div class="theme-toggle-container" onclick="toggleTheme()">
+                <i id="theme-icon-moon" class="fas fa-moon toggle-icon"></i>
+                <i id="theme-icon-sun" class="fas fa-sun toggle-icon active"></i>
+            </div>
+            <!-- Scalable User avatar wrapper -->
+            <div class="user-avatar" onclick="toggleSidebar()">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
     </div>
 
-    <!-- Balance Card -->
-    <div class="wallet-card">
-        <div><small style="color: #636e72;">ব্যালেন্স</small><h3 id="balance-val">৳ 0.00</h3></div>
-        <button class="confirm-btn" style="width: auto; padding: 10px 18px; margin:0;" onclick="checkAuthAndOpen('deposit-modal')">ADD MONEY </button>
+    <!-- Panel statistics overview -->
+    <div class="panel-stats-grid">
+        <!-- Card 1: Username -->
+        <div class="p-stat-card">
+            <div class="p-stat-icon" style="color: #ff7675;"><i class="fas fa-user-circle"></i></div>
+            <div class="p-stat-info">
+                <span class="p-stat-label">Username</span>
+                <span class="p-stat-value" id="stat-username">Guest</span>
+            </div>
+        </div>
+
+        <!-- Card 2: Balance -->
+        <div class="p-stat-card">
+            <div class="p-stat-icon" style="color: #2ecc71;"><i class="fas fa-wallet"></i></div>
+            <div class="p-stat-info">
+                <span class="p-stat-label">My Balance</span>
+                <span class="p-stat-value" id="stat-balance">≈. ৳0৳</span>
+            </div>
+        </div>
+
+        <!-- Card 3: Total Spent -->
+        <div class="p-stat-card">
+            <div class="p-stat-icon" style="color: #e67e22;"><i class="fas fa-hand-holding-usd"></i></div>
+            <div class="p-stat-info">
+                <span class="p-stat-label">Total Spent</span>
+                <span class="p-stat-value" id="stat-spent">≈. ৳0</span>
+            </div>
+        </div>
+
+        <!-- Card 4: Total Orders -->
+        <div class="p-stat-card">
+            <div class="p-stat-icon" style="color: #3498db;"><i class="fas fa-box-open"></i></div>
+            <div class="p-stat-info">
+                <span class="p-stat-label">Total Orders</span>
+                <span class="p-stat-value" id="stat-orders-count">2581906</span>
+            </div>
+        </div>
     </div>
 
-    <div class="stats-grid">
-        <div class="stat-box"><small>মোট অর্ডার</small><b id="stat-total">0</b></div>
-        <div class="stat-box"><small>পেন্ডিং</small><b id="stat-pending" style="color:#f39c12;">0</b></div>
-        <div class="stat-box"><small>সফল</small><b id="stat-success" style="color:var(--success);">0</b></div>
+    <!-- Quick Slider category icons row -->
+    <div class="icon-grid-bar">
+        <div class="icon-tab active" onclick="selectCategory('facebook', this)"><i class="fas fa-bars"></i></div>
+        <div class="icon-tab fb" onclick="selectCategory('facebook', this)"><i class="fab fa-facebook-f"></i></div>
+        <div class="icon-tab ig" onclick="selectCategory('instagram', this)"><i class="fab fa-instagram"></i></div>
+        <div class="icon-tab tg" onclick="selectCategory('telegram', this)"><i class="fab fa-telegram-plane"></i></div>
+        <div class="icon-tab tt" onclick="selectCategory('tiktok', this)"><i class="fab fa-tiktok"></i></div>
+        <div class="icon-tab yt" onclick="selectCategory('youtube', this)"><i class="fab fa-youtube"></i></div>
+        <div class="icon-tab tw" onclick="selectCategory('twitch', this)"><i class="fab fa-twitch"></i></div>
+        <div class="icon-tab in" onclick="selectCategory('linkedin', this)"><i class="fab fa-linkedin-in"></i></div>
+        <div class="icon-tab x" onclick="selectCategory('twitter', this)"><i class="fab fa-twitter"></i></div>
+        <div class="icon-tab wa" onclick="selectCategory('whatsapp', this)"><i class="fab fa-whatsapp"></i></div>
+        <div class="icon-tab sp" onclick="selectCategory('spotify', this)"><i class="fab fa-spotify"></i></div>
+        <div class="icon-tab plus" onclick="openFreeTask()"><i class="fas fa-plus"></i></div>
     </div>
 
-    <!-- Home Notice Boxes -->
+    <!-- Main Action Buttons Row -->
+    <div class="action-pill-row">
+        <button class="pill-btn pill-btn-blue" onclick="focusOnCategory()"><i class="fas fa-shopping-cart"></i> New Order</button>
+        <button class="pill-btn pill-btn-outline" onclick="checkAuthAndOpen('deposit-modal')"><i class="fas fa-credit-card"></i> AddFunds</button>
+    </div>
+
+    <!-- Search Box container -->
+    <div class="search-container">
+        <div class="search-box-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search-services-input" class="search-input" placeholder="Search Services..." onkeyup="searchServices()">
+        </div>
+    </div>
+
+    <!-- Category Dropdown wrapper box -->
+    <div class="category-dropdown-container" id="category-select-block">
+        <span class="category-label">Category</span>
+        <select class="custom-select-box" id="category-dropdown" onchange="onCategoryDropdownChange()">
+            <option value="facebook">Facebook - Followers / Likes</option>
+            <option value="tiktok">TikTok - Followers / Views</option>
+            <option value="youtube">YouTube - Subscribers / WatchTime</option>
+            <option value="instagram">Instagram - Followers / Likes</option>
+            <option value="telegram">Telegram - Members</option>
+        </select>
+    </div>
+
+    <!-- Highly prominent Isolated/Dedicated Special Free Service Section Zone -->
+    <div class="free-service-isolated-zone">
+        <h4 class="free-zone-title"><i class="fas fa-gift"></i> Premium Free Service Zone</h4>
+        <p class="free-zone-desc">সম্পূর্ণ ফ্রিতে ফেসবুক লাভ, লাইক, কেয়ার রিয়্যাক্ট সহ চমৎকার সব সার্ভিস উপভোগ করুন একদম বিনামূল্যে!</p>
+        <button class="free-zone-btn" onclick="openFreeTask()"><i class="fas fa-rocket"></i> সার্ভিসটি এখনি নিন</button>
+    </div>
+
+    <!-- General Stats Tracker Summary grid elements -->
+    <div class="stats-summary-grid">
+        <div class="summary-box"><small>মোট অর্ডার</small><b id="stat-total">0</b></div>
+        <div class="summary-box" style="border-top-color:#f39c12;"><small>পেন্ডিং</small><b id="stat-pending" style="color:#f39c12;">0</b></div>
+        <div class="summary-box" style="border-top-color:var(--success);"><small>সফল</small><b id="stat-success" style="color:var(--success);">0</b></div>
+    </div>
+
+    <!-- System informative live notifications boxes -->
     <div id="home-notice-box" class="home-notice-box"></div>
     <div id="home-notice-box-2" class="home-notice-box"></div>
 
-    <!-- Categories -->
-    <div class="cat-grid">
-        <div class="cat-card" onclick="selectCategory('facebook', this)"><img src="https://cdn-icons-png.flaticon.com/512/124/124010.png"><span>Facebook</span></div>
-        <div class="cat-card" onclick="selectCategory('tiktok', this)"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png"><span>TikTok</span></div>
-        <div class="cat-card" onclick="selectCategory('youtube', this)"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png"><span>YouTube</span></div>
-        <div class="cat-card" onclick="selectCategory('instagram', this)"><img src="https://cdn-icons-png.flaticon.com/512/174/174855.png"><span>Instagram</span></div>
-        <div class="cat-card" onclick="selectCategory('telegram', this)"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png"><span>Telegram</span></div>
-        <div class="cat-card" onclick="openFreeTask()" style="background:#fff5f5; border-color:#ffcccc;"><img src="https://cdn-icons-png.flaticon.com/512/2169/2169864.png"><span>Free সার্ভিস</span></div>
-    </div>
-
+    <!-- Dynamically queried services displaying target -->
     <div id="main-display"></div>
 
-    <!-- Free Service Page -->
+    <!-- Free Task dedicated drawer page popup container -->
     <div id="free-service-page">
         <div class="free-header"><i class="fas fa-arrow-left" onclick="closeFreePage()" style="cursor:pointer;"></i> প্রিমিয়াম ফ্রি সার্ভিস</div>
-        <!-- Admin Dynamic Text -->
         <div id="free-dynamic-text" class="free-dynamic-text"></div>
         <div style="padding: 20px;">
-            <div style="background:white; padding:25px; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.05); box-sizing: border-box;">
+            <div style="background:var(--card-bg); padding:25px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.05);">
                 <button class="confirm-btn" onclick="window.open(adminSettings.free_link || '#', '_blank')" style="background:#3498db; margin-bottom:20px;">ভিজিট করুন (Optional)</button>
                 <input type="text" id="free-link-input-full" placeholder="লিংকটি এখানে দিন">
                 <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:15px;">
@@ -178,7 +932,7 @@
         </div>
     </div>
 
-    <!-- Premium Deposit Modal -->
+    <!-- Add Money deposit modal dialog -->
     <div id="deposit-modal" class="modal">
         <div class="modal-content">
             <h3 style="margin:0 0 15px; text-align:center;">Add Money</h3>
@@ -186,11 +940,12 @@
                 <div id="m-bk" onclick="setMethod('𝗕𝗜𝗞𝗔𝗦𝗛')" class="m-btn">BKASH</div>
                 <div id="m-ng" onclick="setMethod('𝗡𝗔𝗚𝗔𝗗')" class="m-btn">NAGAD</div>
             </div>
-            <p id="method-text" style="background:#f8f9fa; padding:12px; border-radius:12px; font-size:13px; text-align:center; border:1px solid #eee;"></p>
+            <p id="method-text" style="background:var(--input-bg); padding:12px; border-radius:10px; font-size:13px; text-align:center; border:1px solid var(--input-border);"></p>
             <input type="number" id="dep-amount" placeholder="টাকার পরিমাণ (মিনিমাম ৩০)">
             <input type="text" id="dep-trx" placeholder="Transaction ID">
             <button class="confirm-btn" onclick="submitDeposit()">রিকোয়েস্ট পাঠান</button>
-            <!-- Restored Promo Box -->
+            
+            <!-- Promocode box container wrapper -->
             <div class="promo-container">
                 <div class="promo-flex">
                     <input type="text" id="promo-input" placeholder="কোড">
@@ -201,37 +956,130 @@
         </div>
     </div>
 
+    <!-- Authenticate modal page wrapper -->
     <div id="auth-modal" class="modal">
         <div class="modal-content">
             <h3 id="auth-title" style="margin-top:0;">লগইন</h3>
-            <div id="login-box"><input type="number" id="login-phone" placeholder="ফোন নম্বর"><input type="password" id="login-pass" placeholder="পাসওয়ার্ড"><button class="confirm-btn" onclick="handleLogin()">লগইন</button><p onclick="toggleAuth(false)" style="text-align:center; color:blue; font-size:12px; margin-top:15px; cursor:pointer;">নতুন অ্যাকাউন্ট তৈরি করুন</p></div>
-            <div id="signup-box" class="hidden"><input type="text" id="reg-name" placeholder="আপনার নাম"><input type="number" id="reg-phone" placeholder="ফোন নম্বর"><input type="password" id="reg-pass" placeholder="পাসওয়ার্ড"><button class="confirm-btn" onclick="handleSignup()">সাইনআপ</button><p onclick="toggleAuth(true)" style="text-align:center; color:blue; font-size:12px; margin-top:15px; cursor:pointer;">লগইন করুন</p></div>
+            <div id="login-box">
+                <input type="number" id="login-phone" placeholder="ফোন নম্বর">
+                <input type="password" id="login-pass" placeholder="পাসওয়ার্ড">
+                <button class="confirm-btn" onclick="handleLogin()">লগইন</button>
+                <p onclick="toggleAuth(false)" style="text-align:center; color:blue; font-size:12px; margin-top:15px; cursor:pointer;">নতুন অ্যাকাউন্ট তৈরি করুন</p>
+            </div>
+            <div id="signup-box" class="hidden">
+                <input type="text" id="reg-name" placeholder="আপনার নাম">
+                <input type="number" id="reg-phone" placeholder="ফোন নম্বর">
+                <input type="password" id="reg-pass" placeholder="পাসওয়ার্ড">
+                <button class="confirm-btn" onclick="handleSignup()">সাইনআপ</button>
+                <p onclick="toggleAuth(true)" style="text-align:center; color:blue; font-size:12px; margin-top:15px; cursor:pointer;">লগইন করুন</p>
+            </div>
             <button onclick="closeModal('auth-modal')" style="border:none; width:100%; color:red; background:none; margin-top:15px; cursor:pointer; font-weight:600;">বন্ধ করুন</button>
         </div>
     </div>
 
-    <div id="order-modal" class="modal"><div class="modal-content"><h3 id="order-service-name" style="margin-top:0;"></h3><p id="order-price-text" style="font-weight:600; color:var(--primary);"></p><input type="text" id="order-link" placeholder="লিংক দিন"><input type="number" id="order-qty" placeholder="পরিমাণ (মিনিমাম ৫০০)" oninput="calculateTotal()"><h4 id="total-price-view" style="text-align:center; background:#f0edff; padding:12px; border-radius:15px;">৳ 0.00</h4><button class="confirm-btn" onclick="confirmOrder()">অর্ডার কনফার্ম</button><button onclick="closeModal('order-modal')" style="border:none; width:100%; color:red; background:none; margin-top:15px; cursor:pointer;">বন্ধ করুন</button></div></div>
-    <div id="about-modal" class="modal"><div class="modal-content"><h3>আমাদের সম্পর্কে</h3><p id="about-text-content" style="font-size:14px; line-height:1.6;"></p><button class="confirm-btn" onclick="closeModal('about-modal')">বন্ধ করুন</button></div></div>
+    <!-- Placement dynamic confirmation order details popup modal drawer -->
+    <div id="order-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="order-service-name" style="margin-top:0;"></h3>
+            <p id="order-price-text" style="font-weight:600; color:var(--secondary);"></p>
+            <input type="text" id="order-link" placeholder="লিংক দিন">
+            <input type="number" id="order-qty" placeholder="পরিমাণ (মিনিমাম ৫০০)" oninput="calculateTotal()">
+            <h4 id="total-price-view" style="text-align:center; background:rgba(108, 92, 231, 0.1); padding:12px; border-radius:12px; color:var(--secondary);">৳ 0.00</h4>
+            <button class="confirm-btn" onclick="confirmOrder()">অর্ডার কনফার্ম</button>
+            <button onclick="closeModal('order-modal')" style="border:none; width:100%; color:red; background:none; margin-top:15px; cursor:pointer;">বন্ধ করুন</button>
+        </div>
+    </div>
 
-    <a id="wa-float-link" href="#" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+    <!-- About portal details modal panel -->
+    <div id="about-modal" class="modal">
+        <div class="modal-content">
+            <h3>আমাদের সম্পর্কে</h3>
+            <p id="about-text-content" style="font-size:14px; line-height:1.6;"></p>
+            <button class="confirm-btn" onclick="closeModal('about-modal')">বন্ধ করুন</button>
+        </div>
+    </div>
 
+    <!-- Purple Floating Support Headset Button element -->
+    <a id="wa-float-link" href="#" class="headset-support-float" target="_blank">
+        <i class="fas fa-headset"></i>
+    </a>
+
+    <!-- Core Dynamic Control JavaScript Engine -->
     <script>
-        const firebaseConfig = { apiKey: "AIzaSyDYZeQsbcbNwKztZIbtx9f0R_nfjZSX01k", authDomain: "bdhack-54132.firebaseapp.com", databaseURL: "https://bdhack-54132-default-rtdb.firebaseio.com", projectId: "bdhack-54132", storageBucket: "bdhack-54132.firebasestorage.app", messagingSenderId: "767198925219", appId: "1:767198925219:web:a520f9a52c4146f1720a16" };
+        // Database connection credentials
+        const firebaseConfig = { 
+            apiKey: "AIzaSyDYZeQsbcbNwKztZIbtx9f0R_nfjZSX01k", 
+            authDomain: "bdhack-54132.firebaseapp.com", 
+            databaseURL: "https://bdhack-54132-default-rtdb.firebaseio.com", 
+            projectId: "bdhack-54132", 
+            storageBucket: "bdhack-54132.firebasestorage.app", 
+            messagingSenderId: "767198925219", 
+            appId: "1:767198925219:web:a520f9a52c4146f1720a16" 
+        };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
         let currentUser = localStorage.getItem('smm_user');
         let activeSrv = null, selectedMethod = '𝗕𝗜𝗞𝗔𝗦𝗛', adminSettings = {}, selectedReact = "";
+        let currentCategoryServices = []; 
 
-        window.onload = () => { fetchAdminSettings(); if(currentUser) setupUser(); };
+        // Active Theme state controller
+        function initTheme() {
+            const savedTheme = localStorage.getItem('smm_theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('theme-icon-moon').classList.add('active');
+                document.getElementById('theme-icon-sun').classList.remove('active');
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.getElementById('theme-icon-moon').classList.remove('active');
+                document.getElementById('theme-icon-sun').classList.add('active');
+            }
+        }
 
-        function showMsg(msg) { document.getElementById('c-alert-msg').innerText = msg; document.getElementById('c-alert').style.display = 'flex'; }
-        function closeAlert() { document.getElementById('c-alert').style.display = 'none'; }
+        // Action function trigger that toggles Dark and Light layouts instantly
+        function toggleTheme() {
+            if (document.body.classList.contains('dark-mode')) {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('smm_theme', 'light');
+                document.getElementById('theme-icon-moon').classList.remove('active');
+                document.getElementById('theme-icon-sun').classList.add('active');
+            } else {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('smm_theme', 'dark');
+                document.getElementById('theme-icon-moon').classList.add('active');
+                document.getElementById('theme-icon-sun').classList.remove('active');
+            }
+        }
 
+        window.onload = () => { 
+            initTheme();
+            fetchAdminSettings(); 
+            if(currentUser) {
+                setupUser(); 
+            } else {
+                updateSpentSpentCard(0);
+            }
+            selectCategory('facebook', document.querySelector('.icon-tab'));
+        };
+
+        function showMsg(msg) { 
+            document.getElementById('c-alert-msg').innerText = msg; 
+            document.getElementById('c-alert').style.display = 'flex'; 
+        }
+        
+        function closeAlert() { 
+            document.getElementById('c-alert').style.display = 'none'; 
+        }
+
+        // Active listeners fetching setting parameters instantly controlled from Admin Panel app
         function fetchAdminSettings() {
             db.ref('admin/settings').on('value', snap => {
                 adminSettings = snap.val() || {};
-                if(adminSettings.app_name) document.getElementById('app-name-top').innerText = adminSettings.app_name;
+                if(adminSettings.app_name) {
+                    document.getElementById('header-brand-name').innerText = adminSettings.app_name;
+                    document.getElementById('app-title').innerText = adminSettings.app_name;
+                }
                 
                 // Notice 1
                 if(adminSettings.home_notice) { 
@@ -249,8 +1097,11 @@
                     document.getElementById('home-notice-box-2').style.display = 'none';
                 }
 
-                if(adminSettings.free_page_text) { document.getElementById('free-dynamic-text').innerText = adminSettings.free_page_text; }
+                if(adminSettings.free_page_text) { 
+                    document.getElementById('free-dynamic-text').innerText = adminSettings.free_page_text; 
+                }
                 document.getElementById('about-text-content').innerText = adminSettings.about_text || "";
+                
                 if(adminSettings.support_wa) {
                     let waUrl = "https://wa.me/" + adminSettings.support_wa.replace(/\s/g, '');
                     document.getElementById('wa-float-link').href = waUrl;
@@ -267,7 +1118,11 @@
             db.ref('users/' + currentUser).on('value', snap => {
                 let u = snap.val();
                 if(u) {
-                    document.getElementById('balance-val').innerText = "৳ " + (u.balance || 0).toFixed(2);
+                    let formattedBal = "৳" + (u.balance || 0).toFixed(2);
+                    // Live user metrics displaying
+                    document.getElementById('stat-username').innerText = u.phone || u.name;
+                    document.getElementById('stat-balance').innerText = `≈ ${formattedBal}৳`;
+                    
                     document.getElementById('side-name').innerText = u.name;
                     document.getElementById('side-phone').innerText = u.phone;
                     document.getElementById('side-logged-in').classList.remove('hidden');
@@ -277,27 +1132,101 @@
             });
         }
 
+        // Count operations calculation based on orders data
         function loadUserStats() {
             db.ref('orders').orderByChild('user').equalTo(currentUser).on('value', snap => {
-                let t = 0, p = 0, s = 0;
-                snap.forEach(c => { let o = c.val(); t++; if(o.status === "Pending") p++; if(o.status === "Success" || o.status === "Completed") s++; });
-                document.getElementById('stat-total').innerText = t; document.getElementById('stat-pending').innerText = p; document.getElementById('stat-success').innerText = s;
+                let t = 0, p = 0, s = 0, spentVal = 0;
+                snap.forEach(c => { 
+                    let o = c.val(); 
+                    t++; 
+                    if(o.status === "Pending") p++; 
+                    if(o.status === "Success" || o.status === "Completed") {
+                        s++; 
+                    }
+                    if(o.cost) {
+                        spentVal += parseFloat(o.cost);
+                    }
+                });
+                document.getElementById('stat-total').innerText = t; 
+                document.getElementById('stat-pending').innerText = p; 
+                document.getElementById('stat-success').innerText = s;
+                updateSpentSpentCard(spentVal);
             });
         }
 
+        function updateSpentSpentCard(amount) {
+            document.getElementById('stat-spent').innerText = `≈. ৳${amount.toFixed(2)}`;
+            document.getElementById('stat-orders-count').innerText = 2581900 + parseInt(amount * 3);
+        }
+
+        // Selecting and loading custom SMM service Categories
         function selectCategory(cat, el) { 
-            document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active-cat'));
+            document.querySelectorAll('.icon-tab').forEach(c => c.classList.remove('active'));
+            if(el) el.classList.add('active');
+            
+            const dropdown = document.getElementById('category-dropdown');
+            if(dropdown) dropdown.value = cat;
+
             loadCategory(cat); 
+        }
+
+        function onCategoryDropdownChange() {
+            let selectedVal = document.getElementById('category-dropdown').value;
+            document.querySelectorAll('.icon-tab').forEach(el => {
+                el.classList.remove('active');
+            });
+            loadCategory(selectedVal);
+        }
+
+        function focusOnCategory() {
+            document.getElementById('category-select-block').scrollIntoView({ behavior: 'smooth' });
         }
 
         function loadCategory(cat) {
             const display = document.getElementById('main-display');
-            display.innerHTML = `<h3 style="margin-left:20px; font-size:16px; margin-top:20px;">${cat.toUpperCase()} সার্ভিসসমূহ</h3>`;
+            display.innerHTML = `<h3 style="margin-left:20px; font-size:16px; margin-top:20px; text-transform: capitalize; color: var(--text-primary);">${cat} সার্ভিসসমূহ</h3>`;
+            
             db.ref('services/' + cat).on('value', snap => {
+                currentCategoryServices = [];
+                display.innerHTML = `<h3 style="margin-left:20px; font-size:16px; margin-top:20px; text-transform: capitalize; color: var(--text-primary);">${cat} সার্ভিসসমূহ</h3>`;
+                
+                if(!snap.exists()) {
+                    display.innerHTML += `<p style="text-align:center; color: var(--text-secondary); font-size:14px; margin: 30px 0;">কোনো সার্ভিস পাওয়া যায়নি!</p>`;
+                    return;
+                }
+
                 snap.forEach(child => {
                     let s = child.val();
-                    display.innerHTML += `<div class="service-card"><div class="ribbon">Best Price</div><span class="srv-name">${s.name}</span><div class="srv-price-tag">৳ ${s.price} / 1000 𝗣𝗖𝗦</div><button class="buy-btn-full" onclick="openOrderModal('${child.key}', '${s.name}', ${s.price})">কিনুন</button></div>`;
+                    s.key = child.key; 
+                    currentCategoryServices.push(s);
+                    renderServiceCard(display, s);
                 });
+            });
+        }
+
+        function renderServiceCard(parentElement, service) {
+            parentElement.innerHTML += `
+                <div class="service-card" data-srvname="${service.name.toLowerCase()}">
+                    <div class="ribbon">Best Price</div>
+                    <span class="srv-name">${service.name}</span>
+                    <div class="srv-price-tag">৳ ${service.price} / 1000 𝗣𝗖𝗦</div>
+                    <button class="buy-btn-full" onclick="openOrderModal('${service.key}', '${service.name}', ${service.price})">
+                        <i class="fas fa-shopping-basket"></i> কিনুন
+                    </button>
+                </div>`;
+        }
+
+        // Live searchable filtering function over dynamically loaded display cards
+        function searchServices() {
+            let searchVal = document.getElementById('search-services-input').value.toLowerCase();
+            let cards = document.querySelectorAll('.service-card');
+            cards.forEach(card => {
+                let name = card.getAttribute('data-srvname');
+                if(name && name.includes(searchVal)) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
             });
         }
 
@@ -307,9 +1236,10 @@
             document.getElementById('m-ng').classList.toggle('active-ng', m==='𝗡𝗔𝗚𝗔𝗗');
             updateDepositNum(); 
         }
+
         function updateDepositNum() { 
-            let num = selectedMethod==='𝗕𝗜𝗞𝗔𝗦𝗛'?adminSettings.bkash_num:adminSettings.nagad_num; 
-            document.getElementById('method-text').innerHTML=`${selectedMethod} 𝗣𝗘𝗥𝗦𝗢𝗡𝗔𝗟: <br><b>${num||'লোড হচ্ছে'}</b><br><button class="copy-btn" onclick="copyNum()">নাম্বার টি কপি করুন</button>`; 
+            let num = selectedMethod==='𝗕𝗜𝗞𝗔𝗦𝗛' ? adminSettings.bkash_num : adminSettings.nagad_num; 
+            document.getElementById('method-text').innerHTML=`${selectedMethod} 𝗣𝗘𝗥𝗦𝗢𝗡𝗔𝗟: <br><b style="font-size:16px; color: var(--text-primary);">${num||'লোড হচ্ছে'}</b><br><button class="copy-btn" onclick="copyNum()">নাম্বার টি কপি করুন</button>`; 
         }
         
         function copyNum() { 
@@ -328,23 +1258,87 @@
             let a = document.getElementById('dep-amount').value, t = document.getElementById('dep-trx').value; 
             if(!a || !t) return showMsg("সব তথ্য দিন"); 
             if(parseFloat(a) < 30) return showMsg("সর্বনিম্ন ৩০ টাকা ডিপোজিট করতে হবে");
-            db.ref('deposits').push({ user:currentUser, amount:parseFloat(a), trx:t, method:selectedMethod, status:"Pending", time:new Date().toLocaleString() }); 
+            db.ref('deposits').push({ 
+                user:currentUser, 
+                amount:parseFloat(a), 
+                trx:t, 
+                method:selectedMethod, 
+                status:"Pending", 
+                time:new Date().toLocaleString() 
+            }); 
             showMsg("রিকোয়েস্ট পাঠানো হয়েছে!"); 
             closeModal('deposit-modal'); 
         }
         
-        function applyPromo() { let code = document.getElementById('promo-input').value.trim(); db.ref('admin/promocodes/' + code).once('value', snap => { let p = snap.val(); if(!p) return showMsg("ভুল প্রোমো কোড!"); db.ref('users/' + currentUser + '/used_promos/' + code).once('value', u => { if(u.exists()) return showMsg("ইতিমধ্যে ব্যবহৃত হয়েছে!"); db.ref('users/' + currentUser + '/balance').once('value', b => { db.ref('users/' + currentUser).update({ balance: (b.val() || 0) + parseFloat(p.amount) }); db.ref('users/' + currentUser + '/used_promos/' + code).set(true); showMsg(`বোনাস ৳${p.amount} যোগ হয়েছে।`); closeModal('deposit-modal'); }); }); }); }
+        function applyPromo() { 
+            let code = document.getElementById('promo-input').value.trim(); 
+            db.ref('admin/promocodes/' + code).once('value', snap => { 
+                let p = snap.val(); 
+                if(!p) return showMsg("ভুল প্রোমো কোড!"); 
+                db.ref('users/' + currentUser + '/used_promos/' + code).once('value', u => { 
+                    if(u.exists()) return showMsg("ইতিমধ্যে ব্যবহৃত হয়েছে!"); 
+                    db.ref('users/' + currentUser + '/balance').once('value', b => { 
+                        db.ref('users/' + currentUser).update({ balance: (b.val() || 0) + parseFloat(p.amount) }); 
+                        db.ref('users/' + currentUser + '/used_promos/' + code).set(true); 
+                        showMsg(`বোনাস. ৳${p.amount} যোগ হয়েছে।`); 
+                        closeModal('deposit-modal'); 
+                    }); 
+                }); 
+            }); 
+        }
 
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').style.display = document.getElementById('sidebar').classList.contains('active') ? 'block' : 'none'; }
-        function openModal(id) { document.getElementById(id).style.display='flex'; }
-        function closeModal(id) { document.getElementById(id).style.display='none'; }
-        function logout() { localStorage.removeItem('smm_user'); location.reload(); }
-        function handleLogin() { let p=document.getElementById('login-phone').value, ps=document.getElementById('login-pass').value; db.ref('users/'+p).once('value', s=>{ if(s.exists() && s.val().password == ps){ localStorage.setItem('smm_user', p); location.reload(); } else showMsg("ভুল তথ্য!"); }); }
-        function handleSignup() { let n=document.getElementById('reg-name').value, p=document.getElementById('reg-phone').value, ps=document.getElementById('reg-pass').value; if(!n||!p||!ps) return showMsg("সব তথ্য দিন"); db.ref('users/'+p).set({name:n, phone:p, password:ps, balance:0}).then(()=> { showMsg("সফল! লগইন করুন"); toggleAuth(true); }); }
-        function toggleAuth(isL) { document.getElementById('auth-title').innerText=isL?"লগইন":"রেজিস্ট্রেশন"; document.getElementById('login-box').classList.toggle('hidden', !isL); document.getElementById('signup-box').classList.toggle('hidden', isL); }
-        function openFreeTask() { if(!currentUser) return openModal('auth-modal'); document.getElementById('free-service-page').style.display = 'block'; }
-        function closeFreePage() { document.getElementById('free-service-page').style.display = 'none'; }
-        function setReact(type, el) { selectedReact = type; document.querySelectorAll('.react-box').forEach(i => i.classList.remove('selected')); el.classList.add('selected'); }
+        function toggleSidebar() { 
+            document.getElementById('sidebar').classList.toggle('active'); 
+            document.getElementById('overlay').style.display = document.getElementById('sidebar').classList.contains('active') ? 'block' : 'none'; 
+        }
+        function openModal(id) { 
+            document.getElementById(id).style.display='flex'; 
+        }
+        function closeModal(id) { 
+            document.getElementById(id).style.display='none'; 
+        }
+        function logout() { 
+            localStorage.removeItem('smm_user'); 
+            location.reload(); 
+        }
+
+        function handleLogin() { 
+            let p=document.getElementById('login-phone').value, ps=document.getElementById('login-pass').value; 
+            db.ref('users/'+p).once('value', s=>{ 
+                if(s.exists() && s.val().password == ps){ 
+                    localStorage.setItem('smm_user', p); 
+                    location.reload(); 
+                } else showMsg("ভুল তথ্য!"); 
+            }); 
+        }
+
+        function handleSignup() { 
+            let n=document.getElementById('reg-name').value, p=document.getElementById('reg-phone').value, ps=document.getElementById('reg-pass').value; 
+            if(!n||!p||!ps) return showMsg("সব তথ্য দিন"); 
+            db.ref('users/'+p).set({name:n, phone:p, password:ps, balance:0}).then(()=> { 
+                showMsg("সফল! লগইন করুন"); 
+                toggleAuth(true); 
+            }); 
+        }
+
+        function toggleAuth(isL) { 
+            document.getElementById('auth-title').innerText=isL?"লগইন":"রেজিস্ট্রেশন"; 
+            document.getElementById('login-box').classList.toggle('hidden', !isL); 
+            document.getElementById('signup-box').classList.toggle('hidden', isL); 
+        }
+
+        function openFreeTask() { 
+            if(!currentUser) return openModal('auth-modal'); 
+            document.getElementById('free-service-page').style.display = 'block'; 
+        }
+        function closeFreePage() { 
+            document.getElementById('free-service-page').style.display = 'none'; 
+        }
+        function setReact(type, el) { 
+            selectedReact = type; 
+            document.querySelectorAll('.react-box').forEach(i => i.classList.remove('selected')); 
+            el.classList.add('selected'); 
+        }
         
         function submitFreeOrder() {
             let link = document.getElementById('free-link-input-full').value;
@@ -353,15 +1347,35 @@
                 let lastTime = snap.val().last_free_time || 0;
                 let lockHours = adminSettings.free_lock_hours || 24;
                 if ((Date.now() - lastTime) / (1000 * 60 * 60) < lockHours) return showMsg("পরে ট্রাই করুন।");
-                db.ref('orders').push({ user: currentUser, service: "Free " + selectedReact, link: link, status: "Pending", time: new Date().toLocaleString() });
+                db.ref('orders').push({ 
+                    user: currentUser, 
+                    service: "Free " + selectedReact, 
+                    link: link, 
+                    status: "Pending", 
+                    time: new Date().toLocaleString() 
+                });
                 db.ref('users/' + currentUser).update({ last_free_time: Date.now() });
-                showMsg("অর্ডার সফল!"); closeFreePage();
+                showMsg("অর্ডার সফল!"); 
+                closeFreePage();
             });
         }
 
-        function checkAuthAndOpen(mId) { if(!currentUser) openModal('auth-modal'); else openModal(mId); }
-        function openOrderModal(id, n, p) { if(!currentUser) return openModal('auth-modal'); activeSrv={id,name:n,price:p}; document.getElementById('order-service-name').innerText=n; document.getElementById('order-price-text').innerText="৳"+p+" প্রতি ১০০০ পিস "; openModal('order-modal'); }
-        function calculateTotal() { let q=document.getElementById('order-qty').value||0; document.getElementById('total-price-view').innerText="মোট: ৳ "+((q/1000)*activeSrv.price).toFixed(2); }
+        function checkAuthAndOpen(mId) { 
+            if(!currentUser) openModal('auth-modal'); else openModal(mId); 
+        }
+
+        function openOrderModal(id, n, p) { 
+            if(!currentUser) return openModal('auth-modal'); 
+            activeSrv={id,name:n,price:p}; 
+            document.getElementById('order-service-name').innerText=n; 
+            document.getElementById('order-price-text').innerText="৳"+p+" প্রতি ১০০০ পিস"; 
+            openModal('order-modal'); 
+        }
+
+        function calculateTotal() { 
+            let q=document.getElementById('order-qty').value||0; 
+            document.getElementById('total-price-view').innerText="মোট:. ৳ "+((q/1000)*activeSrv.price).toFixed(2); 
+        }
         
         function confirmOrder() { 
             let q=parseInt(document.getElementById('order-qty').value), link=document.getElementById('order-link').value; 
@@ -371,7 +1385,16 @@
                 let bal=s.val()||0; 
                 if(bal<cost) return showMsg("ব্যালেন্স নেই!"); 
                 let oid=Math.floor(1000+Math.random()*8999); 
-                db.ref('orders/'+oid).set({id:oid, user:currentUser, service:activeSrv.name, qty:q, cost:cost, link:link, status: "Pending", time:new Date().toLocaleString()}).then(()=>{ 
+                db.ref('orders/'+oid).set({
+                    id:oid, 
+                    user:currentUser, 
+                    service:activeSrv.name, 
+                    qty:q, 
+                    cost:cost, 
+                    link:link, 
+                    status: "Pending", 
+                    time:new Date().toLocaleString()
+                }).then(()=>{ 
                     db.ref('users/'+currentUser+'/balance').set(bal-cost); 
                     showMsg("অর্ডার সফল!"); 
                     closeModal('order-modal'); 
@@ -379,8 +1402,37 @@
             }); 
         }
 
-        function showHistory() { toggleSidebar(); const display = document.getElementById('main-display'); display.innerHTML = "<h3 style='margin:20px;'>অর্ডার হিস্ট্রি</h3>"; db.ref('orders').orderByChild('user').equalTo(currentUser).on('value', snap => { snap.forEach(c => { let o = c.val(); display.innerHTML += `<div class="service-card" style="padding:15px; margin-bottom:10px;"><b>#${o.id}</b> - ${o.service}<br><small>${o.status} | ${o.time}</small></div>`; }); }); }
-        function showDepositHistory() { toggleSidebar(); const display = document.getElementById('main-display'); display.innerHTML = "<h3 style='margin:20px;'>ডিপোজিট হিস্ট্রি</h3>"; db.ref('deposits').orderByChild('user').equalTo(currentUser).on('value', snap => { snap.forEach(c => { let d = c.val(); display.innerHTML += `<div class="service-card" style="padding:15px; margin-bottom:10px;"><b>৳${d.amount}</b> - ${d.method}<br><small>${d.status} | ${d.time}</small></div>`; }); }); }
+        function showHistory() { 
+            toggleSidebar(); 
+            const display = document.getElementById('main-display'); 
+            display.innerHTML = "<h3 style='margin:20px; color: var(--text-primary);'>অর্ডার হিস্ট্রি</h3>"; 
+            db.ref('orders').orderByChild('user').equalTo(currentUser).on('value', snap => { 
+                if(!snap.exists()){
+                    display.innerHTML += `<p style="text-align:center; color: var(--text-secondary); font-size:14px; margin:20px;">কোনো অর্ডার হিস্ট্রি নেই</p>`;
+                    return;
+                }
+                snap.forEach(c => { 
+                    let o = c.val(); 
+                    display.innerHTML += `<div class="service-card" style="padding:15px; margin-bottom:10px;"><b>#${o.id}</b> - ${o.service}<br><small>${o.status} | ${o.time}</small></div>`; 
+                }); 
+            }); 
+        }
+
+        function showDepositHistory() { 
+            toggleSidebar(); 
+            const display = document.getElementById('main-display'); 
+            display.innerHTML = "<h3 style='margin:20px; color: var(--text-primary);'>ডিপোজিট হিস্ট্রি</h3>"; 
+            db.ref('deposits').orderByChild('user').equalTo(currentUser).on('value', snap => { 
+                if(!snap.exists()){
+                    display.innerHTML += `<p style="text-align:center; color: var(--text-secondary); font-size:14px; margin:20px;">কোনো ডিপোজিট হিস্ট্রি নেই</p>`;
+                    return;
+                }
+                snap.forEach(c => { 
+                    let d = c.val(); 
+                    display.innerHTML += `<div class="service-card" style="padding:15px; margin-bottom:10px;"><b>৳${d.amount}</b> - ${d.method}<br><small>${d.status} | ${d.time}</small></div>`; 
+                }); 
+            }); 
+        }
     </script>
 </body>
 </html>
