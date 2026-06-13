@@ -37,7 +37,7 @@
         }
 
         body.dark-mode {
-            --bg: #050811; 
+            --bg: #050811; /* Pristine solid black background */
             --card-bg: #0c0f1d; 
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
@@ -393,15 +393,14 @@
             transform: scale(0.97);
         }
 
+        /* Beautiful Dynamic Outlined AddMoney Button (Contrast fixes for dark/light visibility) */
         .pill-btn-outline {
-            background: transparent;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.05);
+            background: var(--gradient-accent); /* Dynamic neon-purple style matching secondary themes */
+            color: white;
+            box-shadow: 0 4px 12px var(--primary-glow);
         }
         .pill-btn-outline:active {
             transform: scale(0.97);
-            background: rgba(59, 130, 246, 0.05);
         }
 
         /* Premium Minimal Pill Search Bar */
@@ -550,7 +549,7 @@
             transform: scale(0.95);
         }
 
-        /* 3-Column Premium Inline Summary Stats (Image 2 - Center aligned 3 Column grid) */
+        /* 3-Column Premium Inline Summary Stats */
         .stats-summary-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr); /* 3 side-by-side columns exactly */
@@ -796,7 +795,7 @@
             gap: 12px;
         }
 
-        /* Dedicated Full-Screen Overlay Window for Free Task (Image 1 - Separated Clean Layout) */
+        /* Dedicated Full-Screen Overlay Window for Free Task (Image 1 - Clean layout) */
         #free-service-page { 
             display: none; 
             position: fixed; 
@@ -1118,7 +1117,7 @@
             <i class="fas fa-arrow-left" onclick="toggleSidebar()" style="position: absolute; right: 20px; top: 20px; color: var(--text-primary); cursor: pointer; font-size: 18px;"></i>
             
             <div style="width:80px; height:80px; background:var(--gradient-accent); border-radius:50%; margin: 0 auto 12px; display:flex; align-items:center; justify-content:center; color:white; font-size:34px;"><i class="fas fa-user"></i></div>
-            <b id="side-name" style="font-size: 17px;">স্বাগতম!</b><br><small id="side-phone" style="color: var(--text-secondary); font-size: 13px;">লগইন করুন</small>
+            <b id="side-name" style="font-size: 17px;">স্বাগতম!</b><br><small id="side-phone" style="color: var(--text-secondary); font-size: 13px;">LOGIN  NOW</small>
         </div>
         <div id="side-logged-in" class="hidden">
             <div class="sidebar-item" onclick="showHistory()"><i class="fas fa-shopping-bag"></i> আমার অর্ডারসমূহ</div>
@@ -1134,7 +1133,7 @@
             <div class="sidebar-item" onclick="logout()" style="color:#ff7675; border-top:1px solid var(--card-border); margin-top:15px;"><i class="fas fa-power-off"></i> লগআউট</div>
         </div>
         <div id="side-logged-out">
-            <div class="sidebar-item" onclick="openModal('auth-modal')"><i class="fas fa-sign-in-alt"></i> লগইন / সাইনআপ</div>
+            <div class="sidebar-item" onclick="openModal('auth-modal')"><i class="fas fa-sign-in-alt"></i> LOGIN  / SING UP</div>
         </div>
     </div>
     <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
@@ -1171,7 +1170,7 @@
         </div>
 
         <div class="p-stat-card">
-            <button class="sync-btn" onclick="syncUserBalance()" title="ব্যালেন্স সিঙ্ক করুন"><i class="fas fa-sync-alt"></i></button>
+            <button class="sync-btn" onclick="syncUserBalance()" title="ব্যালেন্স সিঙ্ক NOW"><i class="fas fa-sync-alt"></i></button>
             <div class="p-stat-icon" style="color: var(--success);"><i class="fas fa-wallet"></i></div>
             <div class="p-stat-info">
                 <span class="p-stat-label">My Balance</span>
@@ -1227,7 +1226,7 @@
     </div>
 
     <div class="category-dropdown-container" id="category-select-block">
-        <span class="category-label">ক্যাটাগরি নির্বাচন করুন</span>
+        <span class="category-label">ক্যাটাগরি নির্বাচন NOW</span>
         <select class="custom-select-box" id="category-dropdown" onchange="onCategoryDropdownChange()">
             <option value="facebook">Facebook - Followers / Likes</option>
             <option value="tiktok">TikTok - Followers / Views</option>
@@ -1241,9 +1240,9 @@
     <div class="compact-free-badge-pill" onclick="openFreeTask()">
         <div class="compact-free-info">
             <i class="fas fa-gift"></i>
-            <span style="font-size:11px; font-weight:700;">ফ্রি রিওয়ার্ড ক্লেম করুন (লাভ, লাইক, কেয়ার)</span>
+            <span style="font-size:11px; font-weight:700;">ফ্রি রিওয়ার্ড ক্লেম NOW (লাভ, লাইক, কেয়ার)</span>
         </div>
-        <span style="font-size:10px; background:rgba(255,255,255,0.2); padding:1px 6px; border-radius:8px; font-weight:bold;">ক্লেম করুন <i class="fas fa-chevron-right"></i></span>
+        <span style="font-size:10px; background:rgba(255,255,255,0.2); padding:1px 6px; border-radius:8px; font-weight:bold;">ক্লেম NOW <i class="fas fa-chevron-right"></i></span>
     </div>
 
     <!-- Shrunken Track ID Search Widget -->
@@ -1255,7 +1254,7 @@
         </div>
     </div>
 
-    <!-- Micro Sized Summary Stats cards (Image 2) -->
+    <!-- Micro Sized Summary Stats cards (Strict Row centering) -->
     <div class="stats-summary-grid">
         <div class="summary-box"><small>মোট অর্ডার</small><b id="stat-total">0</b></div>
         <div class="summary-box" style="border-top-color:#e67e22;"><small>পেন্ডিং</small><b id="stat-pending" style="color:#e67e22;">0</b></div>
@@ -1308,7 +1307,7 @@
         </div>
     </div>
 
-    <!-- Fully Isolated Dedicated Full-Screen Overlay Window for Free Task (Image 1 - Highly unique & glow effect selection) -->
+    <!-- Fully Isolated Dedicated Full-Screen Overlay Window for Free Task (Image 1 - Centered elements beautifully) -->
     <div id="free-service-page">
         <div class="free-header">
             <i class="fas fa-arrow-left" onclick="closeFreePage()" style="cursor:pointer;"></i> প্রিমিয়াম ফ্রি সার্ভিস
@@ -1316,19 +1315,16 @@
         <div id="free-dynamic-text" class="free-dynamic-text"></div>
         <div style="padding: 20px;">
             <div class="free-service-inner-card">
-                <button class="confirm-btn" onclick="window.open(adminSettings.free_link || '#', '_blank')" style="background:#3498db; margin-bottom:5px;">ভিজিট করুন (Optional)</button>
+                <button class="confirm-btn" onclick="window.open(adminSettings.free_link || '#', '_blank')" style="background:#3498db; margin-bottom:5px;">ভিজিট NOW (Optional)</button>
                 <input type="text" id="free-link-input-full" placeholder="লিংকটি এখানে দিন">
-                
-                <!-- Highly polished 3D glowing React select tiles -->
                 <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:15px;">
-                    <div class="react-box" id="react-like" onclick="setReact('Like', this)"><div class="emoji-coded bg-blue">👍</div><span>Like</span></div>
-                    <div class="react-box" id="react-love" onclick="setReact('Love', this)"><div class="emoji-coded bg-red">❤️</div><span>Love</span></div>
-                    <div class="react-box" id="react-care" onclick="setReact('Care', this)"><div class="emoji-coded bg-red">🥰</div><span>Care</span></div>
-                    <div class="react-box" id="react-haha" onclick="setReact('Haha', this)"><div class="emoji-coded bg-yellow">😂</div><span>Haha</span></div>
-                    <div class="react-box" id="react-wow" onclick="setReact('Wow', this)"><div class="emoji-coded bg-yellow">😮</div><span>Wow</span></div>
-                    <div class="react-box" id="react-sad" onclick="setReact('Sad', this)"><div class="emoji-coded bg-yellow">😢</div><span>Sad</span></div>
+                    <div class="react-box" onclick="setReact('Like', this)"><div class="emoji-coded bg-blue">👍</div><span>Like</span></div>
+                    <div class="react-box" onclick="setReact('Love', this)"><div class="emoji-coded bg-red">❤️</div><span>Love</span></div>
+                    <div class="react-box" onclick="setReact('Care', this)"><div class="emoji-coded bg-red">🥰</div><span>Care</span></div>
+                    <div class="react-box" onclick="setReact('Haha', this)"><div class="emoji-coded bg-yellow">😂</div><span>Haha</span></div>
+                    <div class="react-box" onclick="setReact('Wow', this)"><div class="emoji-coded bg-yellow">😮</div><span>Wow</span></div>
+                    <div class="react-box" onclick="setReact('Sad', this)"><div class="emoji-coded bg-yellow">😢</div><span>Sad</span></div>
                 </div>
-                
                 <button class="confirm-btn" onclick="submitFreeOrder()">অর্ডার সাবমিট</button>
             </div>
         </div>
@@ -1358,15 +1354,15 @@
             <div class="deposit-timeline">
                 <div class="timeline-step">
                     <div class="step-number">১</div>
-                    <div class="step-text">নিচে দেওয়া আমাদের পার্সোনাল মোবাইল নম্বরটি কপি করুন।</div>
+                    <div class="step-text">নিচে দেওয়া আমাদের পার্সোনাল মোবাইল নম্বরটি কপি NOW।</div>
                 </div>
                 <div class="timeline-step">
                     <div class="step-number">২</div>
-                    <div class="step-text">আপনার বিকাশ/নগদ অ্যাপ থেকে "Send Money" সম্পন্ন করুন (মিনিমাম ৩০ টাকা)।</div>
+                    <div class="step-text">আপনার বিকাশ/নগদ অ্যাপ থেকে "Send Money" সম্পন্ন NOW (মিনিমাম ৩০ টাকা)।</div>
                 </div>
                 <div class="timeline-step">
                     <div class="step-number">৩</div>
-                    <div class="step-text">পেমেন্টের পর প্রাপ্ত ট্রানজেকশন আইডি ও পরিমাণ নিচে বসিয়ে রিকোয়েস্ট করুন।</div>
+                    <div class="step-text">পেমেন্টের পর প্রাপ্ত ট্রানজেকশন আইডি ও পরিমাণ নিচে বসিয়ে রিকোয়েস্ট NOW।</div>
                 </div>
             </div>
 
@@ -1374,13 +1370,13 @@
             
             <!-- Unique Outlined Beautiful Copy Number Capsule button (Image 3) -->
             <div style="text-align:center; margin-top:-5px; margin-bottom:15px;">
-                <button class="copy-brand-capsule-btn" onclick="copyNum()"><i class="fas fa-copy"></i> নম্বরটি কপি করুন</button>
+                <button class="copy-brand-capsule-btn" onclick="copyNum()"><i class="fas fa-copy"></i> নম্বরটি কপি NOW</button>
             </div>
 
             <input type="number" id="dep-amount" placeholder="টাকার পরিমাণ (মিনিমাম ৩০)" style="padding:12px 14px; font-size:13px; margin:8px 0;">
             <input type="text" id="dep-trx" placeholder="Transaction ID" style="padding:12px 14px; font-size:13px; margin:8px 0;">
             
-            <button class="confirm-btn" onclick="submitDeposit()">রিকোয়েস্ট সাবমিট করুন</button>
+            <button class="confirm-btn" onclick="submitDeposit()">রিকোয়েস্ট সাবমিট NOW</button>
             
             <!-- Unique inline promocode builder with right side integrated apply button -->
             <div class="promo-container">
@@ -1390,14 +1386,14 @@
                 </div>
             </div>
             <!-- Beautiful Capsule styled close button -->
-            <button class="btn-outline-close" onclick="closeModal('deposit-modal')">বন্ধ করুন</button>
+            <button class="btn-outline-close" onclick="closeModal('deposit-modal')">CANCELLED </button>
         </div>
     </div>
 
     <!-- Centered Authenticate Modal Popup (Image 4 - Zero overlaps) -->
     <div id="auth-modal" class="modal">
         <div class="modal-content" style="max-width:380px;">
-            <h3 id="auth-title" style="margin-top:0; text-align:center; margin-bottom:20px; font-size:18px;">লগইন</h3>
+            <h3 id="auth-title" style="margin-top:0; text-align:center; margin-bottom:20px; font-size:18px;">LOGIN </h3>
             
             <!-- Login Box -->
             <div id="login-box">
@@ -1410,8 +1406,8 @@
                     <input type="password" id="login-pass" placeholder="পাসওয়ার্ড">
                 </div>
                 
-                <button class="confirm-btn" onclick="handleLogin()">লগইন</button>
-                <p onclick="toggleAuth(false)" style="text-align:center; color:var(--primary); font-size:13px; margin-top:18px; cursor:pointer; font-weight:600;">নতুন অ্যাকাউন্ট তৈরি করুন</p>
+                <button class="confirm-btn" onclick="handleLogin()">LOGIN </button>
+                <p onclick="toggleAuth(false)" style="text-align:center; color:var(--primary); font-size:13px; margin-top:18px; cursor:pointer; font-weight:600;">Create New Account</p>
             </div>
             
             <!-- Signup Box -->
@@ -1433,11 +1429,11 @@
                     <input type="number" id="reg-ref" placeholder="রেফার কোড (Optional)">
                 </div>
                 
-                <button class="confirm-btn" onclick="handleSignup()">সাইনআপ</button>
-                <p onclick="toggleAuth(true)" style="text-align:center; color:var(--primary); font-size:13px; margin-top:18px; cursor:pointer; font-weight:600;">লগইন করুন</p>
+                <button class="confirm-btn" onclick="handleSignup()">SING UP</button>
+                <p onclick="toggleAuth(true)" style="text-align:center; color:var(--primary); font-size:13px; margin-top:18px; cursor:pointer; font-weight:600;">LOGIN  NOW</p>
             </div>
             
-            <button class="btn-outline-close" onclick="closeModal('auth-modal')">বন্ধ করুন</button>
+            <button class="btn-outline-close" onclick="closeModal('auth-modal')">CANCELLED </button>
         </div>
     </div>
 
@@ -1452,21 +1448,21 @@
             
             <div class="billing-summary-card">
                 <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                    <span>প্রতি ১০০০ পিস চার্জ:</span>
+                    <span>মোট পরিমাণ  : চার্জ  :</span>
                     <span id="bill-base-rate">৳ 0.00</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                    <span>মোট পরিমাণ:</span>
+                    <span>মোট পরিমাণ  :</span>
                     <span id="bill-total-qty">0 PCS</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; font-weight:bold; border-top:1px dashed var(--input-border); padding-top:6px; margin-top:6px;">
-                    <span>সর্বমোট মূল্য:</span>
+                    <span>সর্বমোট মূল্য  :</span>
                     <span id="bill-grand-total" style="color:var(--secondary);">৳ 0.00</span>
                 </div>
             </div>
 
             <button class="confirm-btn" onclick="confirmOrder()">অর্ডার কনফার্ম</button>
-            <button class="btn-outline-close" onclick="closeModal('order-modal')">বন্ধ করুন</button>
+            <button class="btn-outline-close" onclick="closeModal('order-modal')">CANCELLED </button>
         </div>
     </div>
 
@@ -1475,16 +1471,16 @@
         <div class="modal-content" style="max-width:390px; padding:24px;">
             <h3 style="margin-bottom:15px; text-align:center;"><i class="fas fa-gift" style="color:var(--secondary);"></i> রেফার এবং ইন</h3>
             <p style="font-size:13px; line-height:1.6; color:var(--text-secondary); text-align:center; margin-bottom:15px;">
-                আপনার বন্ধুদের আমাদের প্যানেলে রেফার করুন! যখন তারা অ্যাকাউন্ট খোলার সময় আপনার রেফারেল কোড ব্যবহার করবে এবং প্রথমবার ব্যালেন্স ডিপোজিট করবে, আপনি পাবেন তাদের ডিপোজিটের **১০% বোনাস** ব্যালেন্স একদম ফ্রিতে!
+                আপনার বন্ধুদের আমাদের প্যানেলে রেফার NOW! যখন তারা অ্যাকাউন্ট খোলার সময় আপনার রেফারেল কোড ব্যবহার করবে এবং প্রথমবার ব্যালেন্স ডিপোজিট করবে, আপনি পাবেন তাদের ডিপোজিটের **১০% বোনাস** ব্যালেন্স একদম ফ্রিতে!
             </p>
             
             <div style="background:var(--input-bg); border:1px solid var(--input-border); border-radius:12px; padding:15px; text-align:center; margin-bottom:15px;">
                 <small style="font-size:10px; color:var(--text-secondary); text-transform:uppercase; font-weight:700;">আপনার রেফার কোড (ফোন নম্বর)</small>
                 <h4 id="refer-code-val" style="font-size:18px; font-weight:800; color:var(--primary); margin-top:5px;">01XXXXXXXXX</h4>
-                <button class="copy-btn" onclick="copyReferCode()"><i class="fas fa-copy"></i> কোড কপি করুন</button>
+                <button class="copy-btn" onclick="copyReferCode()"><i class="fas fa-copy"></i> কোড কপি NOW</button>
             </div>
             
-            <button class="btn-outline-close" onclick="closeModal('refer-modal')">বন্ধ করুন</button>
+            <button class="btn-outline-close" onclick="closeModal('refer-modal')">CANCELLED </button>
         </div>
     </div>
 
@@ -1493,7 +1489,7 @@
         <div class="modal-content">
             <h3 style="margin-top: 0;">আমাদের সম্পর্কে</h3>
             <p id="about-text-content" style="font-size:14px; line-height:1.7; color: var(--text-secondary);"></p>
-            <button class="confirm-btn" onclick="closeModal('about-modal')">বন্ধ করুন</button>
+            <button class="confirm-btn" onclick="closeModal('about-modal')">CANCELLED </button>
         </div>
     </div>
 
@@ -1735,7 +1731,7 @@
         }
 
         function syncUserBalance() {
-            if(!currentUser) return showMsg("অনুগ্রহ করে আগে লগইন করুন!");
+            if(!currentUser) return showMsg("অনুগ্রহ করে আগে LOGIN  NOW!");
             const btn = document.querySelector('.sync-btn i');
             btn.style.transform = "rotate(360deg)";
             btn.style.transition = "transform 0.6s ease";
@@ -1753,7 +1749,7 @@
 
         function quickTrackOrder() {
             let orderID = document.getElementById('quick-track-id').value.trim();
-            if(!orderID) return showMsg("অনুগ্রহ করে অর্ডার আইডি প্রদান করুন!");
+            if(!orderID) return showMsg("অনুগ্রহ করে অর্ডার আইডি প্রদান NOW!");
             
             db.ref('orders/' + orderID).once('value', snap => {
                 if(!snap.exists()) {
@@ -1823,7 +1819,7 @@
                 display.innerHTML = `<h3 style="margin-left:20px; font-size:14px; margin-top:20px; text-transform: capitalize; color: var(--text-primary);"><i class="fas fa-list-ul"></i> ${cat} সার্ভিসসমূহ</h3>`;
                 
                 if(!snap.exists()) {
-                    display.innerHTML += `<p style="text-align:center; color: var(--text-secondary); font-size:13px; margin: 30px 0;">কোনো সার্ভিস পাওয়া যায়নি!</p>`;
+                    display.innerHTML += `<p style="text-align:center; color: var(--text-secondary); font-size:14px; margin: 30px 0;">কোনো সার্ভিস পাওয়া যায়নি!</p>`;
                     return;
                 }
 
@@ -1879,7 +1875,7 @@
 
         function updateDepositNum() { 
             let num = selectedMethod==='𝗕𝗜𝗞𝗔𝗦𝗛' ? adminSettings.bkash_num : adminSettings.nagad_num; 
-            document.getElementById('method-text').innerHTML=`${selectedMethod} 𝗣𝗘𝗥𝗦𝗢𝗡𝗔𝗟: <br><b style="font-size:18px; color: var(--text-primary); letter-spacing: 0.5px;">${num||'লোড হচ্ছে'}</b>`; 
+            document.getElementById('method-text').innerHTML=`${selectedMethod} 𝗣𝗘Ｒ𝗦𝗢𝗡𝗔𝗟: <br><b style="font-size:18px; color: var(--text-primary); letter-spacing: 0.5px;">${num||'লোড হচ্ছে'}</b>`; 
         }
         
         function copyNum() { 
@@ -1976,13 +1972,13 @@
             }
 
             db.ref('users/'+p).set(userObj).then(()=> { 
-                showMsg("সফল! লগইন করুন"); 
+                showMsg("সফল! LOGIN  NOW"); 
                 toggleAuth(true); 
             }); 
         }
 
         function toggleAuth(isL) { 
-            document.getElementById('auth-title').innerText = isL ? "লগইন" : "রেজিস্ট্রেশন"; 
+            document.getElementById('auth-title').innerText = isL ? "LOGIN " : "REGISTRATION "; 
             if (isL) {
                 document.getElementById('login-box').classList.remove('hidden');
                 document.getElementById('signup-box').classList.add('hidden');
@@ -2015,7 +2011,7 @@
             db.ref('users/' + currentUser).once('value', snap => {
                 let lastTime = snap.val().last_free_time || 0;
                 let lockHours = adminSettings.free_lock_hours || 24;
-                if ((Date.now() - lastTime) / (1000 * 60 * 60) < lockHours) return showMsg("পরে ট্রাই করুন।");
+                if ((Date.now() - lastTime) / (1000 * 60 * 60) < lockHours) return showMsg("পরে ট্রাই NOW।");
                 db.ref('orders').push({ 
                     user: currentUser, 
                     service: "Free " + selectedReact, 
@@ -2038,7 +2034,7 @@
             activeSrv={id,name:n,price:p}; 
             
             document.getElementById('order-service-name').innerText=n; 
-            document.getElementById('order-price-text').innerText="৳"+p+" প্রতি ১০০০ পিস"; 
+            document.getElementById('order-price-text').innerText="৳"+p+" প্রতি 1000 পিস"; 
             
             document.getElementById('bill-base-rate').innerText = "৳ " + p.toFixed(2);
             document.getElementById('bill-total-qty').innerText = "0 PCS";
